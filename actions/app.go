@@ -65,6 +65,7 @@ func App() *buffalo.App {
 		app.Use(popmw.Transaction(models.DB))
 		app.GET("/", HomeHandler)
 		app.GET("/quiz/categories", QuizCategories)
+		app.GET("/quiz/questions", QuizQuestions)
 	}
 
 	return app

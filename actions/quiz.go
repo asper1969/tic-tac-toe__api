@@ -18,3 +18,8 @@ func QuizCategories(c buffalo.Context) error {
 
 	return c.Render(http.StatusOK, r.JSON(categories))
 }
+
+// QuizQuestions default implementation.
+func QuizQuestions(c buffalo.Context) error {
+	return c.Render(http.StatusOK, r.JSON(""))
+}
