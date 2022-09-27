@@ -1,12 +1,12 @@
 ---
 development:
   dialect: "sqlite3"
-  database: C:\Users\alexey.i\go\tic-tac-toe__api_tic_tac_toe_api_development.sqlite
+  database: ./db/main_dev.db
 
 test:
   dialect: "sqlite3"
-  database: C:\Users\alexey.i\go\tic-tac-toe__api_tic_tac_toe_api_test.sqlite
+  database: ./db/main_test.db
 
 production:
   dialect: "sqlite3"
-  database: C:\Users\alexey.i\go\tic-tac-toe__api_tic_tac_toe_api_production.sqlite
+  database: ./db/main_prod.db
