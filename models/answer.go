@@ -14,7 +14,7 @@ type Answer struct {
 	QuestionID int64     `json:"-" db:"question_id"`
 	IsRight    bool      `json:"is_right" db:"is_right"`
 	Hash       string    `json:"hash" db:"hash"`
-	Question   *Question `json:"question" belongs_to:"question"`
+	Question   *Question `json:"-" belongs_to:"question"`
 }
 
 // String is not required by pop and may be deleted
