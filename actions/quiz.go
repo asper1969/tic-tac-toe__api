@@ -44,7 +44,7 @@ func QuizQuestions(c buffalo.Context) error {
 		dbQuery = dbQuery.Where("difficulty IN (?)", levels)
 	}
 
-	err := dbQuery.All(&questions)
+	err := dbQuery.EagerPreload().All(&questions)
 
 	if err != nil {
 		fmt.Println(err)

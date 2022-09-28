@@ -9,12 +9,13 @@ import (
 
 // Question is used by pop to map your questions database table to your go code.
 type Question struct {
-	ID         int64  `json:"id" db:"id"`
-	Difficulty int8   `json:"difficulty" db:"difficulty"`
-	Text       string `json:"text" db:"text"`
-	CategoryID int64  `json:"category_id" db:"category_id"`
-	Published  bool   `json:"published" db:"published"`
-	Hash       string `json:"hash" db:"hash"`
+	ID         int64    `json:"id" db:"id"`
+	Difficulty int8     `json:"difficulty" db:"difficulty"`
+	Text       string   `json:"text" db:"text"`
+	CategoryID int64    `json:"category_id" db:"category_id"`
+	Published  bool     `json:"published" db:"published"`
+	Hash       string   `json:"hash" db:"hash"`
+	Answers    []Answer `json:"answers" has_many:"answers"`
 }
 
 // String is not required by pop and may be deleted
