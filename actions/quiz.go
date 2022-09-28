@@ -1,7 +1,9 @@
 package actions
 
 import (
+	"fmt"
 	"net/http"
+	"net/url"
 	"tic-tac-toe__api/models"
 
 	"github.com/gobuffalo/buffalo"
@@ -21,5 +23,33 @@ func QuizCategories(c buffalo.Context) error {
 
 // QuizQuestions default implementation.
 func QuizQuestions(c buffalo.Context) error {
-	return c.Render(http.StatusOK, r.JSON(""))
+	questions := models.Questions{}
+	dbQuery := models.DB.Where("published = true")
+
+	params := c.Params().(url.Values)
+	categories := params["category[]"]
+	levels := params["difficulty[]"]
+
+	if len(categories) > 0 {
+		/**
+		* Get all published filtered by categories
+		**/
+		dbQuery = dbQuery.Where("category_id IN (?)", categories)
+	}
+
+	if len(levels) > 0 {
+		/**
+		* Get all published filtered by levels
+		**/
+		dbQuery = dbQuery.Where("difficulty IN (?)", levels)
+	}
+
+	err := dbQuery.All(&questions)
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Render(http.StatusOK, r.JSON(err))
+	}
+
+	return c.Render(http.StatusOK, r.JSON(questions))
 }
