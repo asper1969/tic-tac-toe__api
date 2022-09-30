@@ -1,0 +1,11 @@
+create_table("session_logs") {
+	t.Column("id", "int", {primary: true})
+	t.Column("session_id", "int")
+	t.Column("update_dt", "int")
+	t.Column("places_set", "string")
+	t.Column("questions_log", "string")
+	t.Column("f_team_score", "int")
+	t.Column("s_team_score", "int")
+	t.ForeignKey("session_id", {"sessions": ["id"]}, {"on_delete": "cascade"})
+	t.DisableTimestamps()
+}

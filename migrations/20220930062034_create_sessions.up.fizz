@@ -1,0 +1,12 @@
+create_table("sessions") {
+	t.Column("id", "int", {primary: true})
+	t.Column("f_team", "string")
+	t.Column("s_team", "string")
+	t.Column("game_pass", "string")
+	t.Column("questions_set", "string")
+	t.Column("levels", "string")
+	t.Column("categories", "string")
+	t.Column("start_dt", "int")
+	t.Column("end_dt", "int")
+	t.DisableTimestamps()
+}

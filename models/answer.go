@@ -9,9 +9,9 @@ import (
 
 // Answer is used by pop to map your answers database table to your go code.
 type Answer struct {
-	ID         int64     `json:"id" db:"id"`
+	ID         int       `json:"id" db:"id"`
 	Text       string    `json:"text" db:"text"`
-	QuestionID int64     `json:"-" db:"question_id"`
+	QuestionID int       `json:"-" db:"question_id"`
 	IsRight    bool      `json:"is_right" db:"is_right"`
 	Hash       string    `json:"hash" db:"hash"`
 	Question   *Question `json:"-" belongs_to:"question"`

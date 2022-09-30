@@ -9,7 +9,7 @@ import (
 
 // Category is used by pop to map your categories database table to your go code.
 type Category struct {
-	ID        int64  `json:"id" db:"id"`
+	ID        int    `json:"id" db:"id"`
 	Name      string `json:"title" db:"name"`
 	Published bool   `json:"published" db:"published"`
 	Hash      string `json:"hash" db:"hash"`

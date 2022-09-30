@@ -66,6 +66,7 @@ func App() *buffalo.App {
 		app.GET("/", HomeHandler)
 		app.GET("/quiz/categories", QuizCategories)
 		app.GET("/quiz/questions", QuizQuestions)
+		app.POST("/session/create", SessionCreate)
 	}
 
 	return app
