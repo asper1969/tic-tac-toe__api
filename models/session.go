@@ -2,7 +2,6 @@ package models
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/gobuffalo/nulls"
 	"github.com/gobuffalo/pop/v6"
@@ -18,8 +17,8 @@ type Session struct {
 	QuestionsSet string       `json:"questions_set" db:"questions_set"`
 	Levels       string       `json:"levels" db:"levels"`
 	Categories   string       `json:"categories" db:"categories"`
-	StartDt      time.Time    `json:"start_dt" db:"start_dt"`
-	EndDt        nulls.Time   `json:"-" db:"end_dt"`
+	StartDt      string       `json:"start_dt" db:"start_dt"`
+	EndDt        nulls.String `json:"-" db:"end_dt"`
 	SessionLogs  []SessionLog `json:"session_logs" has_many:"session_logs"`
 }
 

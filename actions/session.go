@@ -44,7 +44,7 @@ func SessionCreate(c buffalo.Context) error {
 		Categories:   string(categories),
 		Levels:       string(levels),
 		GamePass:     gamePass,
-		StartDt:      time.Now(),
+		StartDt:      time.Now().Format("2006-02-01 00:00:00"),
 		QuestionsSet: string(questionsSet),
 	}
 
@@ -68,4 +68,19 @@ func generateGamePass() string {
 	}
 
 	return str
+}
+
+// SessionGet default implementation.
+func SessionGet(c buffalo.Context) error {
+	gamePass := c.Param("game_pass")
+	session := models.Session{}
+
+	err := models.DB.Where("game_pass = ?", gamePass).First(&session)
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Render(http.StatusOK, r.JSON(err))
+	}
+
+	return c.Render(http.StatusOK, r.JSON(session))
 }

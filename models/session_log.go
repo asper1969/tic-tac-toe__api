@@ -2,7 +2,6 @@ package models
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
@@ -10,14 +9,14 @@ import (
 
 // SessionLog is used by pop to map your session_logs database table to your go code.
 type SessionLog struct {
-	ID          int       `json:"id" db:"id"`
-	SessionId   int       `json:"session_id" db:"session_id"`
-	UpdateDt    time.Time `json:"update_dt" db:"update_dt"`
-	PlacesSet   string    `json:"places_set" db:"places_set"`
-	QuetionsLog string    `json:"questions_log" db:"questions_log"`
-	FTeamScore  string    `json:"f_team_score" db:"f_team_score"`
-	STeamScore  string    `json:"s_team_score" db:"s_team_score"`
-	Session     *Session  `json:"-" belongs_to:"session"`
+	ID          int      `json:"id" db:"id"`
+	SessionId   int      `json:"session_id" db:"session_id"`
+	UpdateDt    string   `json:"update_dt" db:"update_dt"`
+	PlacesSet   string   `json:"places_set" db:"places_set"`
+	QuetionsLog string   `json:"questions_log" db:"questions_log"`
+	FTeamScore  string   `json:"f_team_score" db:"f_team_score"`
+	STeamScore  string   `json:"s_team_score" db:"s_team_score"`
+	Session     *Session `json:"-" belongs_to:"session"`
 }
 
 // String is not required by pop and may be deleted
