@@ -37,29 +37,11 @@ var _ = Namespace("socket_server", func() {
 			return nil
 		})
 
+		//Examples
 		server.OnEvent("/", "notice", func(s socketio.Conn, msg string) {
 			fmt.Println("notice:", msg)
 			fmt.Println("Socket#id:", s.ID())
 			fmt.Println("Rooms: ", s.Rooms())
-
-			/**
-			* Test broadcast to specific room
-			**/
-			roomName := "eDF2n:1"
-			server.BroadcastToRoom("/", roomName, "room", "Room: eDF2n:1")
-
-			/**
-			* Tes db query
-			**/
-			var result models.Session
-			err := models.DB.RawQuery("SELECT * FROM sessions WHERE game_pass = ?", "eDF2n").First(&result)
-
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			fmt.Println(result)
-
 			s.Emit("reply", "have "+msg)
 		})
 
@@ -81,6 +63,22 @@ var _ = Namespace("socket_server", func() {
 
 		server.OnDisconnect("/", func(s socketio.Conn, reason string) {
 			fmt.Println("closed", reason)
+		})
+
+		doEvery(3, func() {
+			//Test broadcast to specific room
+			roomName := "KH1ZH:1"
+			server.BroadcastToRoom("/", roomName, "room", "Room: eDF2n:1")
+
+			//Test db query
+			var notifications models.RoomNotifications
+			err := models.DB.RawQuery("SELECT * FROM room_notifications WHERE status = 1").All(&notifications)
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			fmt.Println(notifications)
 		})
 
 		go server.Serve()
@@ -129,3 +127,19 @@ var _ = Namespace("socket_server", func() {
 	})
 
 })
+
+func doEvery(d time.Duration, f func()) {
+	ticker := time.NewTicker(d * time.Second)
+	quit := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				f()
+			case <-quit:
+				ticker.Stop()
+				return
+			}
+		}
+	}()
+}
