@@ -17,6 +17,7 @@ type Session struct {
 	QuestionsSet string       `json:"questions_set" db:"questions_set"`
 	Levels       string       `json:"levels" db:"levels"`
 	Categories   string       `json:"categories" db:"categories"`
+	MaxScore     int          `json:"max_score" db:"max_score"`
 	StartDt      string       `json:"start_dt" db:"start_dt"`
 	EndDt        nulls.String `json:"-" db:"end_dt"`
 	SessionLogs  []SessionLog `json:"session_logs" has_many:"session_logs"`

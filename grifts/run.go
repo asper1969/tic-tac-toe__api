@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"tic-tac-toe__api/models"
 	"time"
 
 	. "github.com/gobuffalo/grift/grift"
@@ -21,7 +22,7 @@ const (
 
 var _ = Namespace("socket_server", func() {
 
-	Desc("run", "Task Description")
+	Desc("run", "Run socket server")
 	Add("run", func(c *Context) error {
 		server := socketio.NewServer(nil)
 
@@ -46,6 +47,18 @@ var _ = Namespace("socket_server", func() {
 			**/
 			roomName := "eDF2n:1"
 			server.BroadcastToRoom("/", roomName, "room", "Room: eDF2n:1")
+
+			/**
+			* Tes db query
+			**/
+			var result models.Session
+			err := models.DB.RawQuery("SELECT * FROM sessions WHERE game_pass = ?", "eDF2n").First(&result)
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			fmt.Println(result)
 
 			s.Emit("reply", "have "+msg)
 		})

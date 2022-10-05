@@ -1,0 +1,7 @@
+create_table("room_notifications") {
+	t.Column("id", "int", {primary: true})
+	t.Column("room", "string")
+	t.Column("status", "int")
+	t.Column("update_dt", "string")
+	t.DisableTimestamps()
+}

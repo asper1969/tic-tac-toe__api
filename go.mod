@@ -11,12 +11,15 @@ require (
 	github.com/gobuffalo/mw-forcessl v1.0.1
 	github.com/gobuffalo/mw-i18n/v2 v2.0.2
 	github.com/gobuffalo/mw-paramlogger v1.0.1
+	github.com/gobuffalo/nulls v0.4.2
 	github.com/gobuffalo/pop/v6 v6.0.7
 	github.com/gobuffalo/suite/v4 v4.0.3
 	github.com/gobuffalo/validate/v3 v3.3.3
 	github.com/gobuffalo/x v0.1.0
 	github.com/gofrs/uuid v4.3.0+incompatible
+	github.com/googollee/go-socket.io v1.6.2
 	github.com/rs/cors v1.8.2
+	github.com/thanhpk/randstr v1.0.4
 	github.com/unrolled/secure v1.13.0
 )
 
@@ -40,12 +43,10 @@ require (
 	github.com/gobuffalo/logger v1.0.7 // indirect
 	github.com/gobuffalo/meta v0.3.2 // indirect
 	github.com/gobuffalo/mw-csrf v1.0.1 // indirect
-	github.com/gobuffalo/nulls v0.4.2 // indirect
 	github.com/gobuffalo/plush/v4 v4.1.15 // indirect
 	github.com/gobuffalo/refresh v1.13.1 // indirect
 	github.com/gobuffalo/tags/v3 v3.1.4 // indirect
 	github.com/gomodule/redigo v1.8.4 // indirect
-	github.com/googollee/go-socket.io v1.6.2 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
@@ -83,7 +84,6 @@ require (
 	github.com/spf13/cobra v1.5.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.8.0 // indirect
-	github.com/thanhpk/randstr v1.0.4 // indirect
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
 	golang.org/x/net v0.0.0-20220826154423-83b083e8dc8b // indirect
 	golang.org/x/sync v0.0.0-20220923202941-7f9b1623fab7 // indirect

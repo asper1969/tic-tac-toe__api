@@ -11,3 +11,8 @@ func (as *ActionSuite) Test_Session_Get() {
 func (as *ActionSuite) Test_Session_Connect() {
 	as.Fail("Not Implemented!")
 }
+
+func (as *ActionSuite) Test_Session_Update() {
+	as.Fail("Not Implemented!")
+}
+

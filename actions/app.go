@@ -68,6 +68,7 @@ func App() *buffalo.App {
 		app.GET("/quiz/questions", QuizQuestions)
 		app.POST("/session/create", SessionCreate)
 		app.GET("/session/get", SessionGet)
+		app.POST("/session/update", SessionUpdate)
 	}
 
 	return app
