@@ -13,6 +13,8 @@ type RoomNotification struct {
 	Room     string `json:"room" db:"room"`
 	Status   int    `json:"status" db:"status"`
 	UpdateDt string `json:"update_dt" db:"update_dt"`
+	Type     int    `json:"type" db:"type"`
+	Data     string `json:"data" db:"data"`
 }
 
 // String is not required by pop and may be deleted

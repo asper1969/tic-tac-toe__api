@@ -31,8 +31,14 @@ var _ = Namespace("socket_server", func() {
 			gameCode := url.Query().Get("game_code")
 			teamID := url.Query().Get("team_id")
 			s.SetContext("")
-			roomName := fmt.Sprintf("%s:%s", gameCode, teamID)
-			s.Join(roomName)
+
+			//Join session room
+			s.Join(gameCode)
+
+			//Join team room
+			if teamID != "" {
+				s.Join(fmt.Sprintf("%s:%s", gameCode, teamID))
+			}
 
 			return nil
 		})
@@ -45,17 +51,17 @@ var _ = Namespace("socket_server", func() {
 			s.Emit("reply", "have "+msg)
 		})
 
-		server.OnEvent("/chat", "msg", func(s socketio.Conn, msg string) string {
-			s.SetContext(msg)
-			return "recv " + msg
-		})
+		// server.OnEvent("/chat", "msg", func(s socketio.Conn, msg string) string {
+		// 	s.SetContext(msg)
+		// 	return "recv " + msg
+		// })
 
-		server.OnEvent("/", "bye", func(s socketio.Conn) string {
-			last := s.Context().(string)
-			s.Emit("bye", last)
-			s.Close()
-			return last
-		})
+		// server.OnEvent("/", "bye", func(s socketio.Conn) string {
+		// 	last := s.Context().(string)
+		// 	s.Emit("bye", last)
+		// 	s.Close()
+		// 	return last
+		// })
 
 		server.OnError("/", func(s socketio.Conn, e error) {
 			fmt.Println("meet error:", e)
@@ -66,11 +72,6 @@ var _ = Namespace("socket_server", func() {
 		})
 
 		doEvery(3, func() {
-			//Test broadcast to specific room
-			roomName := "KH1ZH:1"
-			server.BroadcastToRoom("/", roomName, "room", "Room: eDF2n:1")
-
-			//Test db query
 			var notifications models.RoomNotifications
 			err := models.DB.RawQuery("SELECT * FROM room_notifications WHERE status = 1").All(&notifications)
 
@@ -78,7 +79,11 @@ var _ = Namespace("socket_server", func() {
 				log.Fatal(err)
 			}
 
-			fmt.Println(notifications)
+			for _, notification := range notifications {
+				fmt.Println(notification.Room)
+				server.BroadcastToRoom("/", notification.Room, "room", notification.Room)
+				models.DB.RawQuery("UPDATE room_notifications SET status = 2 WHERE id = ?", notification.ID).Exec()
+			}
 		})
 
 		go server.Serve()
@@ -86,9 +91,6 @@ var _ = Namespace("socket_server", func() {
 
 		http.Handle("/socket.io/", server)
 		// http.Handle("/", http.FileServer(http.Dir("./asset")))
-
-		log.Printf("Serving at 127.0.0.1:%s", port)
-		log.Fatal(http.ListenAndServe(port, nil))
 
 		//graceful-shutdown
 		done := make(chan os.Signal, 1)

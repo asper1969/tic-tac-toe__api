@@ -26,6 +26,7 @@ type UpdateRequest struct {
 	FTeamScore   int    `json:"f_team_score"`
 	STeamScore   int    `json:"s_team_score"`
 	TeamID       int    `json:"team_id"`
+	Type         int    `json:"type"`
 }
 
 // SessionCreate default implementation.
@@ -86,7 +87,7 @@ func SessionGet(c buffalo.Context) error {
 	gamePass := c.Param("game_pass")
 	session := models.Session{}
 
-	err := models.DB.Where("game_pass = ?", gamePass).First(&session)
+	err := models.DB.Where("game_pass = ?", gamePass).EagerPreload().First(&session)
 
 	if err != nil {
 		fmt.Println(err)
@@ -134,12 +135,31 @@ func SessionUpdate(c buffalo.Context) error {
 		return c.Render(http.StatusBadGateway, r.JSON(err))
 	}
 
-	//Add record to room_notifications
+	sessionData, _ := json.Marshal(sessionLog)
+
+	//Record for room_notifications
 	roomNotification := models.RoomNotification{
-		Room:     fmt.Sprintf("%s:%d", requestData.GamePass, requestData.TeamID),
 		Status:   1,
 		UpdateDt: time.Now().Format("2006-02-01 00:00:00"),
+		Type:     requestData.Type,
+		Data:     string(sessionData),
 	}
+
+	//Accept move type
+	if requestData.Type == 1 {
+		//Show question update notification for specific rrom
+		roomNotification.Room = fmt.Sprintf("%s:%d", requestData.GamePass, requestData.TeamID)
+
+		err = models.DB.Create(&roomNotification)
+
+		if err != nil {
+			fmt.Println(err)
+			return c.Render(http.StatusBadGateway, r.JSON(err))
+		}
+	}
+
+	//Places update notification for all rooms
+	roomNotification.Room = requestData.GamePass
 
 	err = models.DB.Create(&roomNotification)
 

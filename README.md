@@ -35,6 +35,15 @@ If you point your browser to [http://127.0.0.1:3000](http://127.0.0.1:3000) you 
 buffalo task socket_server:run 
 ```
 
+## Room notification statuses
+1 - Notification is ready for sending
+2 - Notification was sent
+
+
+## Update session request types
+1 - Accept move event initiated by Mr.Moderator
+2 - Question answer event initiated by team
+
 ## TODO:
 
 Add token verification for sessions
