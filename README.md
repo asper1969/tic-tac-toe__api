@@ -41,10 +41,12 @@ buffalo task socket_server:run
 2 - Notification was sent
 
 
-## Update session request types
+## Update session request types (room notification types)
 1 - Accept move event initiated by Mr.Moderator
 
 2 - Question answer event initiated by team
+
+3 - Answer window created
 
 ## TODO:
 

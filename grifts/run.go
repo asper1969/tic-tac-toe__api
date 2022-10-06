@@ -51,10 +51,10 @@ var _ = Namespace("socket_server", func() {
 			s.Emit("reply", "have "+msg)
 		})
 
-		// server.OnEvent("/chat", "msg", func(s socketio.Conn, msg string) string {
-		// 	s.SetContext(msg)
-		// 	return "recv " + msg
-		// })
+		server.OnEvent("/chat", "msg", func(s socketio.Conn, msg string) string {
+			s.SetContext(msg)
+			return "recv " + msg
+		})
 
 		// server.OnEvent("/", "bye", func(s socketio.Conn) string {
 		// 	last := s.Context().(string)
@@ -81,8 +81,17 @@ var _ = Namespace("socket_server", func() {
 
 			for _, notification := range notifications {
 				fmt.Println(notification.Room)
-				server.BroadcastToRoom("/", notification.Room, "room", notification.Room)
-				models.DB.RawQuery("UPDATE room_notifications SET status = 2 WHERE id = ?", notification.ID).Exec()
+				// models.DB.RawQuery("UPDATE room_notifications SET status = 2 WHERE id = ?", notification.ID).Exec()
+
+				if notification.Type == 3 {
+					//Check most actual open answer window
+					//If open and create_dt + 1 min < time.Now() ==> Update status and BroadcastToRoom
+					//Close window
+					models.DB.RawQuery("UPDATE room_notifications SET status = 3 WHERE id = ?", notification.ID).Exec()
+				} else {
+					models.DB.RawQuery("UPDATE room_notifications SET status = 2 WHERE id = ?", notification.ID).Exec()
+					server.BroadcastToRoom("/", notification.Room, "room", notification.Type)
+				}
 			}
 		})
 

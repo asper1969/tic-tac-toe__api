@@ -156,6 +156,9 @@ func SessionUpdate(c buffalo.Context) error {
 			fmt.Println(err)
 			return c.Render(http.StatusBadGateway, r.JSON(err))
 		}
+
+		//Create answers window
+		//Create new notification with type 3
 	}
 
 	//Places update notification for all rooms
