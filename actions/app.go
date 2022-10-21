@@ -64,11 +64,16 @@ func App() *buffalo.App {
 
 		app.Use(popmw.Transaction(models.DB))
 		app.GET("/", HomeHandler)
-		app.GET("/quiz/categories", QuizCategories)
-		app.GET("/quiz/questions", QuizQuestions)
-		app.POST("/session/create", SessionCreate)
-		app.GET("/session/get", SessionGet)
-		app.POST("/session/update", SessionUpdate)
+		app.GET("/api/categories", QuizCategories)
+		app.GET("/api/questions", QuizQuestions)
+		app.POST("/api/session", SessionCreate)
+		app.GET("/api/session", SessionGet)
+		app.PUT("/api/session", SessionUpdate)
+
+		//TODO: add admin routes
+		// */api/admin/categories - right now same as /api/categories
+		// */api/admin/questions - GET full list without randomization
+		// */api/admin/questions/:id - GET/POST/PUT/DELETE by :id
 	}
 
 	return app

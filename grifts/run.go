@@ -87,7 +87,8 @@ var _ = Namespace("socket_server", func() {
 					//Check most actual open answer window
 					//If open and create_dt + 1 min < time.Now() ==> Update status and BroadcastToRoom
 					//Close window
-					models.DB.RawQuery("UPDATE room_notifications SET status = 3 WHERE id = ?", notification.ID).Exec()
+
+					// models.DB.RawQuery("UPDATE room_notifications SET status = 2 WHERE id = ?", notification.ID).Exec()
 				} else {
 					models.DB.RawQuery("UPDATE room_notifications SET status = 2 WHERE id = ?", notification.ID).Exec()
 					server.BroadcastToRoom("/", notification.Room, "room", notification.Type)
