@@ -71,9 +71,11 @@ func App() *buffalo.App {
 		app.PUT("/api/session", SessionUpdate)
 
 		app.GET("/api/admin/categories", QuizCategories)
+		app.GET("/api/admin/questions", QuizQuestionsAdmin)
 		//TODO: add admin routes
-		// */api/admin/questions - GET full list without randomization
+
 		// */api/admin/questions/:id - GET/POST/PUT/DELETE by :id
+		app.GET("/api/admin/questions/{id}", GetQuestionAdmin)
 	}
 
 	return app
