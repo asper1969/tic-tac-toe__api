@@ -39,7 +39,8 @@ func SessionCreate(c buffalo.Context) error {
 	}
 
 	gamePass := generateGamePass()
-	questions, err := GetQuestionSet(requestData.Categories, requestData.Levels)
+	// TODO: locale
+	questions, err := GetQuestionSet(requestData.Categories, requestData.Levels, "ru")
 
 	if err != nil {
 		return c.Render(http.StatusBadGateway, r.JSON(err))

@@ -27,6 +27,7 @@ func QuizQuestions(c buffalo.Context) error {
 	params := c.Params().(url.Values)
 	categories := []int{}
 	levels := []int{}
+	locale := c.Param("locale")
 
 	for _, i := range params["category[]"] {
 		j, err := strconv.Atoi(i)
@@ -44,7 +45,7 @@ func QuizQuestions(c buffalo.Context) error {
 		levels = append(levels, j)
 	}
 
-	questions, err := GetQuestionSet(categories, levels)
+	questions, err := GetQuestionSet(categories, levels, locale)
 
 	if err != nil {
 		fmt.Println(err)
@@ -108,9 +109,9 @@ func QuizQuestionsAdmin(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.JSON(questions))
 }
 
-func GetQuestionSet(categories []int, levels []int) (models.Questions, error) {
+func GetQuestionSet(categories []int, levels []int, locale string) (models.Questions, error) {
 	questions := models.Questions{}
-	dbQuery := models.DB.Where("published = true")
+	dbQuery := models.DB.Where("published = true").Where("locale = ?", locale)
 
 	if len(categories) > 0 {
 		/**

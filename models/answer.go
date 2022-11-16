@@ -3,18 +3,19 @@ package models
 import (
 	"encoding/json"
 
+	"github.com/gobuffalo/nulls"
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
 )
 
 // Answer is used by pop to map your answers database table to your go code.
 type Answer struct {
-	ID         int       `json:"id" db:"id"`
-	Text       string    `json:"text" db:"text"`
-	QuestionID int       `json:"-" db:"question_id"`
-	IsRight    bool      `json:"is_right" db:"is_right"`
-	Hash       string    `json:"hash" db:"hash"`
-	Question   *Question `json:"-" belongs_to:"question"`
+	ID         int          `json:"id" db:"id"`
+	Text       string       `json:"text" db:"text"`
+	QuestionID int          `json:"-" db:"question_id"`
+	IsRight    bool         `json:"is_right" db:"is_right"`
+	Hash       nulls.String `json:"hash" db:"hash"`
+	Question   *Question    `json:"-" belongs_to:"question"`
 }
 
 // String is not required by pop and may be deleted

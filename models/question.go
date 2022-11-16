@@ -3,19 +3,21 @@ package models
 import (
 	"encoding/json"
 
+	"github.com/gobuffalo/nulls"
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
 )
 
 // Question is used by pop to map your questions database table to your go code.
 type Question struct {
-	ID         int      `json:"id" db:"id"`
-	Difficulty int      `json:"difficulty" db:"difficulty"`
-	Text       string   `json:"text" db:"text"`
-	CategoryID int      `json:"category_id" db:"category_id"`
-	Published  bool     `json:"published" db:"published"`
-	Hash       string   `json:"hash" db:"hash"`
-	Answers    []Answer `json:"answers" has_many:"answers"`
+	ID         int          `json:"id" db:"id"`
+	Difficulty int          `json:"difficulty" db:"difficulty"`
+	Text       string       `json:"text" db:"text"`
+	CategoryID int          `json:"category_id" db:"category_id"`
+	Published  bool         `json:"published" db:"published"`
+	Hash       nulls.String `json:"hash" db:"hash"`
+	Locale     string       `json:"locale" db:"locale"`
+	Answers    []Answer     `json:"answers" has_many:"answers"`
 }
 
 // String is not required by pop and may be deleted
