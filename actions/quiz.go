@@ -127,7 +127,7 @@ func GetQuestionSet(categories []int, levels []int, locale string) (models.Quest
 		dbQuery = dbQuery.Where("difficulty IN (?)", levels)
 	}
 
-	err := dbQuery.EagerPreload().Order("RANDOM()").Limit(100).All(&questions)
+	err := dbQuery.EagerPreload().Order("RAND()").Limit(100).All(&questions)
 	if err != nil {
 		return nil, err
 	}
