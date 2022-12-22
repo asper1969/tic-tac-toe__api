@@ -54,3 +54,18 @@ Add token verification for sessions
 
 Migrate to Postgre. Change datetime fields type in models. Implement postgre pubsub for notifications
 
+## Tournaments:
+Moderator creates session. In respons he gets session code
+
+Each Team join session by session code
+
+Moderator initiates tournament start
+
+At that point teams see their opponents and can start game
+
+Moderator gets realtime statistics from matches
+
+Moderator can stop tournament at any time
+
+Modearator and teams can relaunch the app and join back to tournament by unique tournament token
+

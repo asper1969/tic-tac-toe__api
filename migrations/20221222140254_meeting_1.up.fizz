@@ -1,0 +1,12 @@
+create_table("meeting") {
+    t.Column("id", "integer", {primary: true})
+    t.Column("f_team_id", "integer")
+    t.Column("s_team_id", "integer")
+    t.Column("start_dt", "datetime")
+    t.Column("end_dt", "datetime", {"null": true})
+    t.Column("tournament_id", "integer")
+    t.Column("questions_set", "json", {"null": true})
+    t.ForeignKey("tournament_id", {"tournament": ["id"]}, {"on_delete": "cascade"})
+    t.ForeignKey("f_team_id", {"team": ["id"]}, {"on_delete": "cascade"})
+    t.ForeignKey("s_team_id", {"team": ["id"]}, {"on_delete": "cascade"})
+}
