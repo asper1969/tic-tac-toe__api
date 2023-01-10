@@ -2,7 +2,7 @@ create_table("meeting") {
     t.Column("id", "integer", {primary: true})
     t.Column("f_team_id", "integer")
     t.Column("s_team_id", "integer")
-    t.Column("start_dt", "datetime")
+    t.Column("start_dt", "datetime", {"null": true})
     t.Column("end_dt", "datetime", {"null": true})
     t.Column("tournament_id", "integer")
     t.Column("questions_set", "json", {"null": true})

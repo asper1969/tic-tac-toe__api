@@ -1,7 +1,6 @@
 create_table("meeting_log") {
     t.Column("id", "integer", {primary: true})
     t.Column("meeting_id", "integer")
-    t.Column("update_dt", "datetime")
     t.Column("places_set", "json", {"null": true})
     t.Column("questions_log", "json", {"null": true})
     t.Column("f_team_score", "integer", {"default": 0})

@@ -2,7 +2,7 @@ create_table("tournament") {
     t.Column("id", "integer", {primary: true})
     t.Column("game_pass", "string")
     t.Column("locale", "string")
-    t.Column("start_dt", "datetime")
+    t.Column("start_dt", "datetime", {"null": true})
     t.Column("end_dt", "datetime", {"null": true})
     t.Column("max_score", "integer")
 }

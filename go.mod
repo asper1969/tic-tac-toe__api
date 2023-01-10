@@ -16,6 +16,7 @@ require (
 	github.com/gobuffalo/suite/v4 v4.0.3
 	github.com/gobuffalo/validate/v3 v3.3.3
 	github.com/gobuffalo/x v0.1.0
+	github.com/gofrs/uuid v4.3.0+incompatible
 	github.com/googollee/go-socket.io v1.6.2
 	github.com/rs/cors v1.8.2
 	github.com/thanhpk/randstr v1.0.4
@@ -45,7 +46,6 @@ require (
 	github.com/gobuffalo/plush/v4 v4.1.15 // indirect
 	github.com/gobuffalo/refresh v1.13.1 // indirect
 	github.com/gobuffalo/tags/v3 v3.1.4 // indirect
-	github.com/gofrs/uuid v4.3.0+incompatible // indirect
 	github.com/gomodule/redigo v1.8.4 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect

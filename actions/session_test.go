@@ -15,4 +15,3 @@ func (as *ActionSuite) Test_Session_Connect() {
 func (as *ActionSuite) Test_Session_Update() {
 	as.Fail("Not Implemented!")
 }
-
