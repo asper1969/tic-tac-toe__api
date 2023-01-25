@@ -76,6 +76,10 @@ func App() *buffalo.App {
 		//TODO: add admin routes
 
 		// */api/admin/questions/:id - *GET*/POST/PUT/DELETE by :id
+
+		app.POST("/tournaments/create", TournamentsCreate)
+		app.POST("/tournaments/join", TournamentsJoin)
+		app.POST("/tournaments/action", TournamentsAction)
 	}
 
 	return app
