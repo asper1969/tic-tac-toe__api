@@ -66,3 +66,30 @@ func (e *Event) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 func (e *Event) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }
+
+func GetLastEvents(tokens []string, lastEventID string) (Events, error) {
+	events := Events{}
+	//get all tokens events
+	dbQuery := DB.Where("receiver_id IN (?)", tokens)
+
+	if lastEventID != "" {
+		//get all events for tokens after lastEvent create_dt
+		lastEvent := Event{}
+		err := DB.Where("id = ?", lastEventID).First(&lastEvent)
+
+		if err != nil {
+			return nil, err
+		}
+
+		dbQuery.Where("created_at > ?", lastEvent.CreatedAt)
+	}
+
+	dbQuery.Order("created_at ASC")
+	err := dbQuery.All(&events)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return events, nil
+}

@@ -1,5 +1,6 @@
 create_table("tokens") {
 	t.Column("id", "uuid", {primary: true})
     t.Column("type", "integer")
+	t.Column("object_id", "integer")
 	t.Timestamps()
 }

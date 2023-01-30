@@ -225,6 +225,10 @@ func TournamentsStart(c buffalo.Context) error {
 		return c.Render(http.StatusOK, r.JSON(err))
 	}
 
+	//Get tournament by token
+	//update tournament (update start dt)
+	//create matches for all team pairs
+
 	return c.Render(http.StatusOK, r.JSON(requestData))
 }
 
