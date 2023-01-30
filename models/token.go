@@ -9,45 +9,43 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-// Team is used by pop to map your teams database table to your go code.
-type Team struct {
-	ID           uuid.UUID `json:"id" db:"id"`
-	Name         string    `json:"name" db:"name"`
-	TournamentID uuid.UUID `json:"tournament_id" db:"tournament_id"`
-	CreatedAt    time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at" db:"updated_at"`
-	Meeting      *Meeting  `json:"-" belongs_to:"meeting"`
+// Token is used by pop to map your tokens database table to your go code.
+type Token struct {
+	ID        uuid.UUID `json:"id" db:"id"`
+	Type      int       `json:"type" db:"type"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
 
 // String is not required by pop and may be deleted
-func (t Team) String() string {
+func (t Token) String() string {
 	jt, _ := json.Marshal(t)
 	return string(jt)
 }
 
-// Teams is not required by pop and may be deleted
-type Teams []Team
+// Tokens is not required by pop and may be deleted
+type Tokens []Token
 
 // String is not required by pop and may be deleted
-func (t Teams) String() string {
+func (t Tokens) String() string {
 	jt, _ := json.Marshal(t)
 	return string(jt)
 }
 
 // Validate gets run every time you call a "pop.Validate*" (pop.ValidateAndSave, pop.ValidateAndCreate, pop.ValidateAndUpdate) method.
 // This method is not required and may be deleted.
-func (t *Team) Validate(tx *pop.Connection) (*validate.Errors, error) {
+func (t *Token) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }
 
 // ValidateCreate gets run every time you call "pop.ValidateAndCreate" method.
 // This method is not required and may be deleted.
-func (t *Team) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
+func (t *Token) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }
 
 // ValidateUpdate gets run every time you call "pop.ValidateAndUpdate" method.
 // This method is not required and may be deleted.
-func (t *Team) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
+func (t *Token) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }

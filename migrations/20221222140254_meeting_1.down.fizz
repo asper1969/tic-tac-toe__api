@@ -1,1 +1,1 @@
-drop_table("meeting")
+drop_table("meetings")

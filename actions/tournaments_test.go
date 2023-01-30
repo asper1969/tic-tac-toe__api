@@ -20,8 +20,6 @@ func (as *ActionSuite) Test_Tournaments_Pause() {
 	as.Fail("Not Implemented!")
 }
 
-
 func (as *ActionSuite) Test_Tournaments_Action() {
 	as.Fail("Not Implemented!")
 }
-

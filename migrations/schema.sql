@@ -51,6 +51,24 @@ CREATE TABLE `categories` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `events`
+--
+
+DROP TABLE IF EXISTS `events`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `events` (
+  `id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sender_id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `receiver_id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` int(11) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `meeting`
 --
 
@@ -61,12 +79,13 @@ CREATE TABLE `meeting` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `f_team_id` int(11) NOT NULL,
   `s_team_id` int(11) NOT NULL,
-  `start_dt` datetime NOT NULL,
+  `start_dt` datetime DEFAULT NULL,
   `end_dt` datetime DEFAULT NULL,
   `tournament_id` int(11) NOT NULL,
   `questions_set` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`questions_set`)),
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
+  `round` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `tournament_id` (`tournament_id`),
   KEY `f_team_id` (`f_team_id`),
@@ -87,13 +106,13 @@ DROP TABLE IF EXISTS `meeting_log`;
 CREATE TABLE `meeting_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `meeting_id` int(11) NOT NULL,
-  `update_dt` datetime NOT NULL,
   `places_set` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`places_set`)),
   `questions_log` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`questions_log`)),
   `f_team_score` int(11) NOT NULL DEFAULT 0,
   `s_team_score` int(11) NOT NULL DEFAULT 0,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
+  `accepted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `meeting_id` (`meeting_id`),
   CONSTRAINT `meeting_log_ibfk_1` FOREIGN KEY (`meeting_id`) REFERENCES `meeting` (`id`) ON DELETE CASCADE
@@ -204,14 +223,28 @@ DROP TABLE IF EXISTS `team`;
 CREATE TABLE `team` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `create_dt` datetime NOT NULL,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tournament_id` int(11) NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `tournament_id` (`tournament_id`),
   CONSTRAINT `team_ibfk_1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `tokens`
+--
+
+DROP TABLE IF EXISTS `tokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tokens` (
+  `id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` int(11) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -226,11 +259,12 @@ CREATE TABLE `tournament` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `game_pass` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `locale` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `start_dt` datetime NOT NULL,
+  `start_dt` datetime DEFAULT NULL,
   `end_dt` datetime DEFAULT NULL,
   `max_score` int(11) NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
+  `rounds` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -244,4 +278,4 @@ CREATE TABLE `tournament` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-12-22 17:14:18
+-- Dump completed on 2023-01-30 11:39:54

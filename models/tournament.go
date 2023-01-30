@@ -18,6 +18,7 @@ type Tournament struct {
 	StartDt   nulls.Time `json:"start_dt" db:"start_dt"`
 	EndDt     nulls.Time `json:"end_dt" db:"end_dt"`
 	MaxScore  int        `json:"max_score" db:"max_score"`
+	Rounds    int        `json:"rounds" db:"rounds"`
 	CreatedAt time.Time  `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time  `json:"updated_at" db:"updated_at"`
 }

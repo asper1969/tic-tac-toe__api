@@ -1,4 +1,4 @@
-create_table("meeting_log") {
+create_table("meeting_logs") {
     t.Column("id", "integer", {primary: true})
     t.Column("meeting_id", "integer")
     t.Column("places_set", "json", {"null": true})

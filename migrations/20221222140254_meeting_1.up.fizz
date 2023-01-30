@@ -1,4 +1,4 @@
-create_table("meeting") {
+create_table("meetings") {
     t.Column("id", "integer", {primary: true})
     t.Column("f_team_id", "integer")
     t.Column("s_team_id", "integer")
