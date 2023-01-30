@@ -28,6 +28,11 @@ type JoinTournamentRequest struct {
 	Code     string `json:"code"`
 }
 
+type JoinTournamentResponse struct {
+	TokenTeam       string `json:"token_team"`
+	TokenTournament string `json:"token_tournament"`
+}
+
 type ActionTournamentRequest struct {
 	Token  string `json:"token"`
 	Action string `json:"action"`
@@ -82,12 +87,14 @@ func TournamentsCreate(c buffalo.Context) error {
 
 	tokenTournament := models.Token{
 		ID:        tournamenUUID,
-		Type:      1, //tournament
+		Type:      models.TOKEN_TOURNAMENT, //tournament
+		ObjectID:  tournament.ID,
 		CreatedAt: time.Now(),
 	}
 	tokenModerator := models.Token{
 		ID:        moderatorUUID,
-		Type:      2, //moderator
+		Type:      models.TOKEN_MODERATOR, //moderator
+		ObjectID:  tournament.ID,
 		CreatedAt: time.Now(),
 	}
 
@@ -123,7 +130,78 @@ func TournamentsJoin(c buffalo.Context) error {
 		return c.Render(http.StatusOK, r.JSON(err))
 	}
 
-	return c.Render(http.StatusOK, r.JSON(requestData))
+	//Get tournament by code
+	tournament := models.Tournament{}
+
+	err := models.DB.Where("game_pass = ?", requestData.Code).First(&tournament)
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Render(http.StatusOK, r.JSON(err))
+	}
+
+	//Create team record
+	team := models.Team{
+		Name:         requestData.TeamName,
+		TournamentID: tournament.ID,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
+	}
+
+	err = models.DB.Create(&team)
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Render(http.StatusBadGateway, r.JSON(err))
+	}
+
+	//Create team token
+	teamUUID, err := uuid.NewV7()
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Render(http.StatusBadGateway, r.JSON(err))
+	}
+
+	tokenTeam := models.Token{
+		ID:        teamUUID,
+		Type:      models.TOKEN_TEAM, //team
+		ObjectID:  team.ID,
+		CreatedAt: time.Now(),
+	}
+
+	err = models.DB.Create(&tokenTeam)
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Render(http.StatusBadGateway, r.JSON(err))
+	}
+
+	tournamentToken := tournament.GetToken().ID
+
+	//Get moderator token
+	//Create new event
+	event := models.Event{
+		SenderID:   tokenTeam.ID,
+		ReceiverID: tournamentToken,
+		Type:       models.TEAM_JOIN_TOURNAMENT,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	}
+
+	err = models.DB.Create(&event)
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Render(http.StatusBadGateway, r.JSON(err))
+	}
+
+	//return team token and tournament token
+
+	return c.Render(http.StatusOK, r.JSON(JoinTournamentResponse{
+		TokenTeam:       tokenTeam.ID.String(),
+		TokenTournament: tournamentToken.String(),
+	}))
 }
 
 // TournamentsAction default implementation.

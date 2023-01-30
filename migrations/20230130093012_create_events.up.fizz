@@ -1,5 +1,5 @@
 create_table("events") {
-	t.Column("id", "uuid", {primary: true})
+	t.Column("id", "integer", {primary: true})
     t.Column("sender_id", "uuid")
     t.Column("receiver_id", "uuid")
     t.Column("type", "integer")

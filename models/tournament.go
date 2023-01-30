@@ -2,17 +2,17 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/gobuffalo/nulls"
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
-	"github.com/gofrs/uuid"
 )
 
 // Tournament is used by pop to map your tournaments database table to your go code.
 type Tournament struct {
-	ID        uuid.UUID  `json:"id" db:"id"`
+	ID        int        `json:"id" db:"id"`
 	GamePass  string     `json:"game_pass" db:"game_pass"`
 	Locale    string     `json:"locale" db:"locale"`
 	StartDt   nulls.Time `json:"start_dt" db:"start_dt"`
@@ -54,4 +54,15 @@ func (t *Tournament) ValidateCreate(tx *pop.Connection) (*validate.Errors, error
 // This method is not required and may be deleted.
 func (t *Tournament) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
+}
+
+func (t *Tournament) GetToken() Token {
+	token := Token{}
+	err := DB.Where("object_id = ?", t.ID).First(&token)
+
+	if err != nil {
+		fmt.Println("Token for object not found")
+	}
+
+	return token
 }

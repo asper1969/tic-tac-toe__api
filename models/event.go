@@ -9,13 +9,29 @@ import (
 	"github.com/gofrs/uuid"
 )
 
+type EventType int
+
+const (
+	ROUND_START               EventType = 1
+	TEAM_JOIN_TOURNAMENT      EventType = 2
+	TEAM_MAKE_MOVE            EventType = 3
+	TEAM_ACCEPT_OPPONENT_MOVE EventType = 4
+	TEAM_ANSWERED_QUESTION    EventType = 5
+	TEAM_WINS                 EventType = 6
+	TOURNAMENT_PAUSED         EventType = 7
+	TOURNAMENT_CONTINUED      EventType = 8
+	TOURNAMENT_STOPPED        EventType = 9
+	MODERATOR_UPDATES_MATCH   EventType = 10
+)
+
 // Event is used by pop to map your events database table to your go code.
 type Event struct {
-	ID         uuid.UUID `json:"id" db:"id"`
+	ID         int       `json:"id" db:"id"`
 	SenderID   uuid.UUID `json:"sender_id" db:"sender_id"`
 	ReceiverID uuid.UUID `json:"receiver_id" db:"receiver_id"`
-	Type       int       `json:"type" db:"type"`
+	Type       EventType `json:"type" db:"type"`
 	CreatedAt  time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at" db:"updated_at"`
 }
 
 // String is not required by pop and may be deleted

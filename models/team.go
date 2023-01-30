@@ -6,17 +6,15 @@ import (
 
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
-	"github.com/gofrs/uuid"
 )
 
 // Team is used by pop to map your teams database table to your go code.
 type Team struct {
-	ID           uuid.UUID `json:"id" db:"id"`
+	ID           int       `json:"id" db:"id"`
 	Name         string    `json:"name" db:"name"`
-	TournamentID uuid.UUID `json:"tournament_id" db:"tournament_id"`
+	TournamentID int       `json:"tournament_id" db:"tournament_id"`
 	CreatedAt    time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at" db:"updated_at"`
-	Meeting      *Meeting  `json:"-" belongs_to:"meeting"`
 }
 
 // String is not required by pop and may be deleted

@@ -9,10 +9,19 @@ import (
 	"github.com/gofrs/uuid"
 )
 
+type TokenType int
+
+const (
+	TOKEN_TOURNAMENT TokenType = 1
+	TOKEN_MODERATOR  TokenType = 2
+	TOKEN_TEAM       TokenType = 3
+)
+
 // Token is used by pop to map your tokens database table to your go code.
 type Token struct {
 	ID        uuid.UUID `json:"id" db:"id"`
-	Type      int       `json:"type" db:"type"`
+	Type      TokenType `json:"type" db:"type"`
+	ObjectID  int       `json:"object_id" db:"object_id"`
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
