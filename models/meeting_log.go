@@ -6,12 +6,11 @@ import (
 
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
-	"github.com/gofrs/uuid"
 )
 
 // MeetingLog is used by pop to map your meeting_logs database table to your go code.
 type MeetingLog struct {
-	ID           uuid.UUID `json:"id" db:"id"`
+	ID           int       `json:"id" db:"id"`
 	MeetingID    int       `json:"meeting_id" db:"meeting_id"`
 	PlacesSet    string    `json:"places_set" db:"places_set"`
 	QuestionsLog string    `json:"quesions_log" db:"questions_log"`
@@ -19,6 +18,7 @@ type MeetingLog struct {
 	STeamScore   int       `json:"s_team_score" db:"s_team_score"`
 	CreatedAt    time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at" db:"updated_at"`
+	ActiveTeam   int       `json:"active_team" db:"active_team"`
 	Meeting      *Meeting  `json:"-" belongs_to:"meeting"`
 }
 

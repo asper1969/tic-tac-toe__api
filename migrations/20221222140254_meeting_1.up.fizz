@@ -6,6 +6,7 @@ create_table("meetings") {
     t.Column("end_dt", "datetime", {"null": true})
     t.Column("tournament_id", "integer")
     t.Column("questions_set", "json", {"null": true})
+    t.Column("round", "integer")
     t.ForeignKey("tournament_id", {"tournament": ["id"]}, {"on_delete": "cascade"})
     t.ForeignKey("f_team_id", {"team": ["id"]}, {"on_delete": "cascade"})
     t.ForeignKey("s_team_id", {"team": ["id"]}, {"on_delete": "cascade"})

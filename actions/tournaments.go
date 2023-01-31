@@ -226,10 +226,26 @@ func TournamentsStart(c buffalo.Context) error {
 	}
 
 	//Get tournament by token
+	tournament := models.Tournament{}
+	q := models.DB.Q()
+	q.LeftJoin("tokens", "tokens.object_id = tournaments.id")
+	q.Where(`tokens.id = ?`, requestData.Token)
+	err := q.Last(&tournament)
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Render(http.StatusOK, r.JSON(err))
+	}
+
 	//update tournament (update start dt)
 	//create matches for all team pairs
+	err = tournament.CreateNextRound()
 
-	return c.Render(http.StatusOK, r.JSON(requestData))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return c.Render(http.StatusOK, r.JSON(tournament))
 }
 
 // TournamentsStop default implementation.

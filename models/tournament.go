@@ -66,3 +66,64 @@ func (t *Tournament) GetToken() Token {
 
 	return token
 }
+
+func (t *Tournament) CreateNextRound() error {
+	//Get last round
+	//Create meetings for next round
+	//--Get all teams and create meetings for each pair
+	lastMeeting := Meeting{}
+	err := DB.Where("tournament_id = ?", t.ID).Last(&lastMeeting)
+
+	//No meetings in tournament
+	if err != nil {
+		//Create new meetings for first round
+		//Get all tournament teams
+		teams := Teams{}
+		err = DB.Where("tournament_id = ?", t.ID).All(&teams)
+
+		if err != nil {
+			return err
+		}
+
+		mid := len(teams) / 2
+		t1 := teams[:mid]
+		t2 := teams[mid:]
+
+		for i := 0; i < len(t1); i++ {
+			firstTeam := t1[i]
+			secondTeam := t2[i]
+
+			round := 1
+
+			meeting := Meeting{
+				FTeamID:      firstTeam.ID,
+				STeamID:      secondTeam.ID,
+				TournamentID: t.ID,
+				CreatedAt:    time.Now(),
+				UpdatedAt:    time.Now(),
+				Round:        round,
+			}
+
+			//TODO: add rounds logic
+			if round == 1 {
+				questionsSet, err := GetQuestionSet([]int{}, []int{}, t.Locale)
+
+				if err != nil {
+					return err
+				}
+
+				questionsSetStr, _ := json.Marshal(questionsSet)
+
+				meeting.QuestionsSet = string(questionsSetStr)
+			}
+
+			err = DB.Create(&meeting)
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}

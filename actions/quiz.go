@@ -45,7 +45,7 @@ func QuizQuestions(c buffalo.Context) error {
 		levels = append(levels, j)
 	}
 
-	questions, err := GetQuestionSet(categories, levels, locale)
+	questions, err := models.GetQuestionSet(categories, levels, locale)
 
 	if err != nil {
 		fmt.Println(err)
@@ -109,31 +109,31 @@ func QuizQuestionsAdmin(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.JSON(questions))
 }
 
-func GetQuestionSet(categories []int, levels []int, locale string) (models.Questions, error) {
-	questions := models.Questions{}
-	dbQuery := models.DB.Where("published = true").Where("locale = ?", locale)
+// func GetQuestionSet(categories []int, levels []int, locale string) (models.Questions, error) {
+// 	questions := models.Questions{}
+// 	dbQuery := models.DB.Where("published = true").Where("locale = ?", locale)
 
-	if len(categories) > 0 {
-		/**
-		* Get all published filtered by categories
-		**/
-		dbQuery = dbQuery.Where("category_id IN (?)", categories)
-	}
+// 	if len(categories) > 0 {
+// 		/**
+// 		* Get all published filtered by categories
+// 		**/
+// 		dbQuery = dbQuery.Where("category_id IN (?)", categories)
+// 	}
 
-	if len(levels) > 0 {
-		/**
-		* Get all published filtered by levels
-		**/
-		dbQuery = dbQuery.Where("difficulty IN (?)", levels)
-	}
+// 	if len(levels) > 0 {
+// 		/**
+// 		* Get all published filtered by levels
+// 		**/
+// 		dbQuery = dbQuery.Where("difficulty IN (?)", levels)
+// 	}
 
-	err := dbQuery.EagerPreload().Order("RAND()").Limit(100).All(&questions)
-	if err != nil {
-		return nil, err
-	}
+// 	err := dbQuery.EagerPreload().Order("RAND()").Limit(100).All(&questions)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return questions, nil
-}
+// 	return questions, nil
+// }
 
 func GetQuestionAdmin(c buffalo.Context) error {
 	questionID := c.Param("id")

@@ -52,3 +52,29 @@ func (q *Question) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) 
 func (q *Question) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }
+
+func GetQuestionSet(categories []int, levels []int, locale string) (Questions, error) {
+	questions := Questions{}
+	dbQuery := DB.Where("published = true").Where("locale = ?", locale)
+
+	if len(categories) > 0 {
+		/**
+		* Get all published filtered by categories
+		**/
+		dbQuery = dbQuery.Where("category_id IN (?)", categories)
+	}
+
+	if len(levels) > 0 {
+		/**
+		* Get all published filtered by levels
+		**/
+		dbQuery = dbQuery.Where("difficulty IN (?)", levels)
+	}
+
+	err := dbQuery.EagerPreload().Order("RAND()").Limit(100).All(&questions)
+	if err != nil {
+		return nil, err
+	}
+
+	return questions, nil
+}
