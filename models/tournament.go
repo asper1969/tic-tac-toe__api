@@ -113,11 +113,64 @@ func (t *Tournament) CreateNextRound() error {
 				}
 
 				questionsSetStr, _ := json.Marshal(questionsSet)
-
 				meeting.QuestionsSet = string(questionsSetStr)
 			}
 
 			err = DB.Create(&meeting)
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (t *Tournament) StartNextRound() error {
+	//Get all new tournament meetings (start_dt == NULL)
+	meetings := Meetings{}
+	err := DB.Where("start_dt IS NULL AND tournament_id = ?", t.ID).All(&meetings)
+
+	if err != nil {
+		return err
+	}
+
+	//Set start_dt for each meeting
+	for _, meeting := range meetings {
+		meeting.StartDt = nulls.Time{
+			Time:  time.Now(),
+			Valid: true,
+		}
+		DB.Update(&meeting)
+
+		teams := Teams{}
+		err := DB.Where("id = ? || id = ?", meeting.FTeamID, meeting.STeamID).All(&teams)
+
+		if err != nil {
+			return err
+		}
+
+		//Create ROUND_START events for each meeting teams
+		for _, team := range teams {
+			//Get team token
+			token := Token{}
+			err := DB.Where("object_id = ?", team.ID).Last(&token)
+			fmt.Println(team.ID)
+
+			if err != nil {
+				return err
+			}
+
+			event := Event{
+				SenderID:   t.GetToken().ID,
+				ReceiverID: token.ID,
+				Type:       ROUND_START,
+				CreatedAt:  time.Now(),
+				UpdatedAt:  time.Now(),
+			}
+
+			err = DB.Create(&event)
 
 			if err != nil {
 				return err

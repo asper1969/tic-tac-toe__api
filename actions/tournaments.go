@@ -192,7 +192,6 @@ func TournamentsJoin(c buffalo.Context) error {
 	err = models.DB.Create(&event)
 
 	if err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusBadGateway, r.JSON(err))
 	}
 
@@ -233,17 +232,29 @@ func TournamentsStart(c buffalo.Context) error {
 	err := q.Last(&tournament)
 
 	if err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusOK, r.JSON(err))
 	}
 
-	//update tournament (update start dt)
+	//TODO: if tournament already has meetings return error
+
+	//update tournament (update start dt)(?)
 	//create matches for all team pairs
 	err = tournament.CreateNextRound()
 
 	if err != nil {
-		fmt.Println(err)
+		return c.Render(http.StatusOK, r.JSON(err))
 	}
+
+	//Start first round
+	err = tournament.StartNextRound()
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Render(http.StatusOK, r.JSON(err))
+	}
+
+	//In response return all matches
+	//Get all tournament matches with start_dt != NULL and end_dt == NULL
 
 	return c.Render(http.StatusOK, r.JSON(tournament))
 }

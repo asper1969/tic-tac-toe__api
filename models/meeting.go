@@ -20,7 +20,6 @@ type Meeting struct {
 	QuestionsSet string       `json:"questions_set" db:"questions_set"`
 	CreatedAt    time.Time    `json:"created_at" db:"created_at"`
 	UpdatedAt    time.Time    `json:"updated_at" db:"updated_at"`
-	Teams        []Team       `json:"teams" has_many:"teams"`
 	MeetingLogs  []MeetingLog `json:"meeting_logs" has_many:"meeting_logs"`
 	Round        int          `json:"round" db:"round"`
 }
