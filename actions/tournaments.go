@@ -249,14 +249,20 @@ func TournamentsStart(c buffalo.Context) error {
 	err = tournament.StartNextRound()
 
 	if err != nil {
+		return c.Render(http.StatusOK, r.JSON(err))
+	}
+
+	//Get all tournament matches with start_dt != NULL and end_dt == NULL
+	//In response return all matches
+	meetings := models.Meetings{}
+	err = models.DB.Where("start_dt IS NOT NULL AND end_dt IS NULL AND tournament_id = ?", tournament.ID).All(&meetings)
+
+	if err != nil {
 		fmt.Println(err)
 		return c.Render(http.StatusOK, r.JSON(err))
 	}
 
-	//In response return all matches
-	//Get all tournament matches with start_dt != NULL and end_dt == NULL
-
-	return c.Render(http.StatusOK, r.JSON(tournament))
+	return c.Render(http.StatusOK, r.JSON(meetings))
 }
 
 // TournamentsStop default implementation.
