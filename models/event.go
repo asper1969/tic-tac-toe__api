@@ -94,3 +94,37 @@ func GetLastEvents(tokens []string, lastEventID string) (Events, error) {
 
 	return events, nil
 }
+
+func (e *Event) ProcessEventPayload() (map[string]string, error) {
+	payload := map[string]string{}
+
+	switch e.Type {
+	case ROUND_START:
+		//Each team gets their meeting
+		//And can play
+	case TEAM_JOIN_TOURNAMENT:
+		//Moderator gets team data
+	case TEAM_ACCEPT_OPPONENT_MOVE:
+		//Active team get signal answer quiz question
+	case TEAM_MAKE_MOVE:
+		//Opponent team gets last meeting_log record
+	case TEAM_ANSWERED_QUESTION:
+		//Opponent team gets last meeting_log record
+	case TEAM_PASSED_MOVE:
+		//Opponent team gets last meeting_log record
+	case TEAM_WINS:
+		//Opponent gets signal
+	case TOURNAMENT_PAUSED:
+		//All teams gets signal. Game freezes
+	case TOURNAMENT_CONTINUED:
+		//All teams gets signal. Game resumed
+	case TOURNAMENT_STOPPED:
+		//All teams gets signal. All meetings ends
+	case MODERATOR_UPDATES_MATCH:
+		//Both meeting teams gets updates
+	default:
+		return payload, nil
+	}
+
+	return map[string]string{}, nil
+}
