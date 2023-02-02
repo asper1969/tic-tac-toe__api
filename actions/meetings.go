@@ -92,3 +92,22 @@ func MeetingsPassMove(c buffalo.Context) error {
 
 	return c.Render(http.StatusOK, r.JSON(map[string]string{"message": "Move was passed"}))
 }
+
+// MeetingsTeamWin default implementation.
+func MeetingsTeamWin(c buffalo.Context) error {
+	payload := &models.TeamActionPayload{}
+
+	if err := c.Bind(payload); err != nil {
+		fmt.Println(err)
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	err := models.ProcessTeamAction(models.TEAM_WINS, *payload)
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	return c.Render(http.StatusOK, r.JSON(map[string]string{"message": "Your team win!"}))
+}

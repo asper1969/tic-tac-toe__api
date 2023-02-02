@@ -88,6 +88,7 @@ func App() *buffalo.App {
 		app.POST("/meetings/answer_question", MeetingsAnswerQuestion)
 		app.POST("/meetings/accept_move", MeetingsAcceptMove)
 		app.POST("/meetings/pass_move", MeetingsPassMove)
+		app.POST("/meetings/team_win", MeetingsTeamWin)
 		app.POST("/tests/post", TestsPost)
 	}
 
