@@ -95,25 +95,57 @@ func GetLastEvents(tokens []string, lastEventID string) (Events, error) {
 	return events, nil
 }
 
-func (e *Event) ProcessEventPayload() (map[string]string, error) {
-	payload := map[string]string{}
+func (e *Event) ProcessEventPayload() (string, error) {
+	var payload []byte
 
 	switch e.Type {
 	case ROUND_START:
 		//Each team gets their meeting
-		//And can play
+		tokenID := e.ReceiverID
+		meeting, err := GetMeetingByTokenID(tokenID)
+
+		if err != nil {
+			return "", err
+		}
+
+		payload, _ = json.Marshal(meeting)
+
+		if err != nil {
+			return "", err
+		}
 	case TEAM_JOIN_TOURNAMENT:
 		//Moderator gets team data
+		team, err := GetTeamByTokenID(e.SenderID)
+
+		if err != nil {
+			return "", err
+		}
+
+		payload, _ = json.Marshal(team)
+
+		if err != nil {
+			return "", err
+		}
 	case TEAM_ACCEPT_OPPONENT_MOVE:
 		//Active team get signal answer quiz question
-	case TEAM_MAKE_MOVE:
+		payload, _ = json.Marshal(map[string]bool{"move_accepted": true})
+	case TEAM_MAKE_MOVE, TEAM_ANSWERED_QUESTION, TEAM_PASSED_MOVE:
 		//Opponent team gets last meeting_log record
-	case TEAM_ANSWERED_QUESTION:
-		//Opponent team gets last meeting_log record
-	case TEAM_PASSED_MOVE:
-		//Opponent team gets last meeting_log record
+		tokenID := e.ReceiverID
+		meetingLog, err := GetLastMeetingLogByTokenID(tokenID)
+
+		if err != nil {
+			return "", err
+		}
+
+		payload, _ = json.Marshal(meetingLog)
+
+		if err != nil {
+			return "", err
+		}
 	case TEAM_WINS:
 		//Opponent gets signal
+		payload, _ = json.Marshal(map[string]bool{"opponent_win": true})
 	case TOURNAMENT_PAUSED:
 		//All teams gets signal. Game freezes
 	case TOURNAMENT_CONTINUED:
@@ -122,9 +154,53 @@ func (e *Event) ProcessEventPayload() (map[string]string, error) {
 		//All teams gets signal. All meetings ends
 	case MODERATOR_UPDATES_MATCH:
 		//Both meeting teams gets updates
-	default:
-		return payload, nil
 	}
 
-	return map[string]string{}, nil
+	return string(payload), nil
+}
+
+func GetTokenByID(tokenID uuid.UUID) (Token, error) {
+	token := Token{}
+	err := DB.Where("id = ?", tokenID).Last(&token)
+	return token, err
+}
+
+func GetTeamByTokenID(tokenID uuid.UUID) (Team, error) {
+	team := Team{}
+
+	token, err := GetTokenByID(tokenID)
+
+	if err != nil {
+		return team, err
+	}
+
+	err = DB.Where("id = ?", token.ObjectID).Last(&team)
+
+	return team, err
+}
+
+func GetMeetingByTokenID(tokenID uuid.UUID) (Meeting, error) {
+	meeting := Meeting{}
+	team, err := GetTeamByTokenID(tokenID)
+
+	if err != nil {
+		return meeting, err
+	}
+
+	err = DB.Where("f_team_id = ? OR s_team_id", team.ID).Last(&meeting)
+
+	return meeting, err
+}
+
+func GetLastMeetingLogByTokenID(tokenID uuid.UUID) (MeetingLog, error) {
+	meetingLog := MeetingLog{}
+	meeting, err := GetMeetingByTokenID(tokenID)
+
+	if err != nil {
+		return meetingLog, err
+	}
+
+	err = DB.Where("meeting_id = ?", meeting.ID).Last(&meetingLog)
+
+	return meetingLog, err
 }

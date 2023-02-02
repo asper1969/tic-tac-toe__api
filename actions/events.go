@@ -10,10 +10,10 @@ import (
 )
 
 type EventProcessResult struct {
-	ID        int               `json:"id"`
-	Payload   map[string]string `json:"payload"`
-	EventDt   time.Time         `json:"event_dt"`
-	ReceiveDt time.Time         `json:"receive_dt"`
+	ID        int       `json:"id"`
+	Payload   string    `json:"payload"`
+	EventDt   time.Time `json:"event_dt"`
+	ReceiveDt time.Time `json:"receive_dt"`
 }
 
 type EventProcessResults []EventProcessResult
