@@ -17,11 +17,12 @@ const (
 	TEAM_MAKE_MOVE            EventType = 3
 	TEAM_ACCEPT_OPPONENT_MOVE EventType = 4
 	TEAM_ANSWERED_QUESTION    EventType = 5
-	TEAM_WINS                 EventType = 6
-	TOURNAMENT_PAUSED         EventType = 7
-	TOURNAMENT_CONTINUED      EventType = 8
-	TOURNAMENT_STOPPED        EventType = 9
-	MODERATOR_UPDATES_MATCH   EventType = 10
+	TEAM_PASSED_MOVE          EventType = 6
+	TEAM_WINS                 EventType = 7
+	TOURNAMENT_PAUSED         EventType = 8
+	TOURNAMENT_CONTINUED      EventType = 9
+	TOURNAMENT_STOPPED        EventType = 10
+	MODERATOR_UPDATES_MATCH   EventType = 11
 )
 
 // Event is used by pop to map your events database table to your go code.

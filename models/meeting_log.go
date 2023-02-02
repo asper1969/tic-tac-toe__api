@@ -18,6 +18,7 @@ type MeetingLog struct {
 	STeamScore   int       `json:"s_team_score" db:"s_team_score"`
 	CreatedAt    time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at" db:"updated_at"`
+	Accepted     bool      `json:"accepted" db:"accepted"`
 	ActiveTeam   int       `json:"active_team" db:"active_team"`
 	Meeting      *Meeting  `json:"-" belongs_to:"meeting"`
 }
