@@ -34,7 +34,8 @@ func EventsGet(c buffalo.Context) error {
 		payload, err := event.ProcessEventPayload()
 
 		if err != nil {
-			return c.Render(http.StatusBadRequest, r.JSON(err.Error()))
+			continue
+			// return c.Render(http.StatusBadRequest, r.JSON(err.Error()))
 		}
 
 		eventsResults[event.Type] = append(eventsResults[event.Type], EventProcessResult{

@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/gobuffalo/pop/v6"
@@ -135,6 +136,7 @@ func (e *Event) ProcessEventPayload() (string, error) {
 		meetingLog, err := GetLastMeetingLogByTokenID(tokenID)
 
 		if err != nil {
+			fmt.Println(err)
 			return "", err
 		}
 
@@ -145,7 +147,7 @@ func (e *Event) ProcessEventPayload() (string, error) {
 		}
 	case TEAM_WINS:
 		//Opponent gets signal
-		payload, _ = json.Marshal(map[string]bool{"opponent_win": true})
+		payload, _ = json.Marshal(map[string]bool{"": true})
 	case TOURNAMENT_PAUSED:
 		//All teams gets signal. Game freezes
 	case TOURNAMENT_CONTINUED:
