@@ -77,19 +77,19 @@ func App() *buffalo.App {
 
 		// */api/admin/questions/:id - *GET*/POST/PUT/DELETE by :id
 
-		app.POST("/tournaments/create", TournamentsCreate)
-		app.POST("/tournaments/join", TournamentsJoin)
-		app.POST("/tournaments/start", TournamentsStart)
-		app.POST("/tournaments/stop", TournamentsStop)
-		app.POST("/tournaments/pause", TournamentsPause)
-		app.POST("/tournaments/action", TournamentsAction)
-		app.GET("/events/get", EventsGet)
-		app.POST("/meetings/make_move", MeetingsMakeMove)
-		app.POST("/meetings/answer_question", MeetingsAnswerQuestion)
-		app.POST("/meetings/accept_move", MeetingsAcceptMove)
-		app.POST("/meetings/pass_move", MeetingsPassMove)
-		app.POST("/meetings/team_win", MeetingsTeamWin)
-		app.POST("/tests/post", TestsPost)
+		app.POST("/api/tournaments/create", TournamentsCreate)
+		app.POST("/api/tournaments/join", TournamentsJoin)
+		app.POST("/api/tournaments/start", TournamentsStart)
+		app.POST("/api/tournaments/stop", TournamentsStop)
+		app.POST("/api/tournaments/pause", TournamentsPause)
+		app.POST("/api/tournaments/action", TournamentsAction)
+		app.GET("/api/events/get", EventsGet)
+		app.POST("/api/meetings/make_move", MeetingsMakeMove)
+		app.POST("/api/meetings/answer_question", MeetingsAnswerQuestion)
+		app.POST("/api/meetings/accept_move", MeetingsAcceptMove)
+		app.POST("/api/meetings/pass_move", MeetingsPassMove)
+		app.POST("/api/meetings/team_win", MeetingsTeamWin)
+		app.POST("/api/tests/post", TestsPost)
 	}
 
 	return app
