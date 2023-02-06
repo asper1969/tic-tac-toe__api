@@ -116,6 +116,7 @@ func (e *Event) ProcessEventPayload() (string, error) {
 		}
 	case TEAM_JOIN_TOURNAMENT:
 		//Moderator gets team data
+		//TODO: all actors gets data
 		team, err := GetTeamByTokenID(e.SenderID)
 
 		if err != nil {

@@ -12,7 +12,7 @@ import (
 )
 
 type CreateTournamentRequest struct {
-	Locale   string `json:"locale"`
+	Locale   string `json:"lang"`
 	MaxScore int    `json:"max_score"`
 	Rounds   int    `json:"rounds"`
 }
