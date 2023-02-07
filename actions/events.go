@@ -18,6 +18,11 @@ type EventProcessResult struct {
 
 type EventProcessResults []EventProcessResult
 
+type EventProcessResponse struct {
+	Results   map[models.EventType]EventProcessResults `json:"results"`
+	LastEvent int                                      `json:"last_event"`
+}
+
 // EventsGet default implementation.
 func EventsGet(c buffalo.Context) error {
 	tokens := c.Params().(url.Values)["token[]"]
@@ -28,6 +33,12 @@ func EventsGet(c buffalo.Context) error {
 		return c.Render(http.StatusBadRequest, r.JSON(err.Error()))
 	}
 
+	if len(events) == 0 {
+		// return c.Error(http.StatusNoContent, errors.New("No events"))
+		return c.Render(http.StatusNoContent, nil)
+	}
+
+	lastEventObject := events[len(events)-1]
 	eventsResults := map[models.EventType]EventProcessResults{}
 
 	for _, event := range events {
@@ -46,5 +57,8 @@ func EventsGet(c buffalo.Context) error {
 		})
 	}
 
-	return c.Render(http.StatusOK, r.JSON(eventsResults))
+	return c.Render(http.StatusOK, r.JSON(EventProcessResponse{
+		Results:   eventsResults,
+		LastEvent: lastEventObject.ID,
+	}))
 }
