@@ -1,7 +1,7 @@
 ---
 development:
   dialect: "mysql"
-  database: "u591386386_api"
+  database: {{envOr "DATABASE_NAME" "database"}}
   host: {{envOr "DATABASE_HOST" "localhost"}}
   port: {{envOr "DATABASE_PORT" "3306"}}
   user: {{envOr "DATABASE_USER" "root"}}
@@ -17,7 +17,7 @@ test:
   # Note that if you use `url`, other configurations are silently ignored.
   # In this case, the URL must contain all required connection parameters.
   #
-  database: "u591386386_api"
+  database: {{envOr "DATABASE_NAME" "database"}}
   host: {{envOr "DATABASE_HOST" "localhost"}}
   port: {{envOr "DATABASE_PORT" "3306"}}
   user: {{envOr "DATABASE_USER" "root"}}
@@ -30,7 +30,7 @@ production:
   #url: {{envOr "DATABASE_URL" "mysql://root:root@(localhost:3306)/tic-tac-toe__api_production?parseTime=true&multiStatements=true&readTimeout=3s"}}
   #
   dialect: "mysql"
-  database: "u591386386_api"
+  database: {{envOr "DATABASE_NAME" "database"}}
   host: {{envOr "DATABASE_HOST" "localhost"}}
   port: {{envOr "DATABASE_PORT" "3306"}}
   user: {{envOr "DATABASE_USER" "root"}}
