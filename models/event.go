@@ -105,6 +105,8 @@ func (e *Event) ProcessEventPayload() (string, error) {
 		tokenID := e.ReceiverID
 		meeting, err := GetMeetingByTokenID(tokenID)
 
+		fmt.Println(meeting)
+
 		if err != nil {
 			return "", err
 		}
@@ -131,7 +133,7 @@ func (e *Event) ProcessEventPayload() (string, error) {
 	case TEAM_ACCEPT_OPPONENT_MOVE:
 		//Active team get signal answer quiz question
 		payload, _ = json.Marshal(map[string]bool{"move_accepted": true})
-	case TEAM_MAKE_MOVE, TEAM_ANSWERED_QUESTION, TEAM_PASSED_MOVE:
+	case TEAM_MAKE_MOVE, TEAM_ANSWERED_QUESTION:
 		//Opponent team gets last meeting_log record
 		tokenID := e.ReceiverID
 		meetingLog, err := GetLastMeetingLogByTokenID(tokenID)
@@ -146,6 +148,8 @@ func (e *Event) ProcessEventPayload() (string, error) {
 		if err != nil {
 			return "", err
 		}
+	case TEAM_PASSED_MOVE:
+		payload, _ = json.Marshal(map[string]bool{"opponent_passed_move": true})
 	case TEAM_WINS:
 		//Opponent gets signal
 		payload, _ = json.Marshal(map[string]bool{"": true})
@@ -190,7 +194,29 @@ func GetMeetingByTokenID(tokenID uuid.UUID) (Meeting, error) {
 		return meeting, err
 	}
 
-	err = DB.Where("f_team_id = ? OR s_team_id", team.ID).Last(&meeting)
+	err = DB.Where("f_team_id = ? OR s_team_id = ?", team.ID, team.ID).Last(&meeting)
+
+	if err != nil {
+		return meeting, err
+	}
+
+	var fTeam, sTeam Team
+	err = DB.Where("id = ?", meeting.FTeamID).Last(&fTeam)
+
+	if err != nil {
+		return meeting, err
+	}
+
+	err = DB.Where("id = ?", meeting.STeamID).First(&sTeam)
+
+	if err != nil {
+		return meeting, err
+	}
+
+	meeting.FTeam = &fTeam
+	meeting.STeam = &sTeam
+
+	// fmt.Println(fTeam)
 
 	return meeting, err
 }

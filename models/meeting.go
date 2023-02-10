@@ -22,6 +22,8 @@ type Meeting struct {
 	UpdatedAt    time.Time    `json:"updated_at" db:"updated_at"`
 	MeetingLogs  []MeetingLog `json:"meeting_logs" has_many:"meeting_logs"`
 	Round        int          `json:"round" db:"round"`
+	FTeam        *Team        `json:"f_team" has_one:"team" fk_id:"f_team_id"`
+	STeam        *Team        `json:"s_team" has_one:"team" fk_id:"s_team_id"`
 }
 
 type TeamActionPayload struct {
@@ -91,7 +93,7 @@ func ProcessTeamAction(action EventType, payload TeamActionPayload) error {
 		return err
 	}
 
-	if action == TEAM_MAKE_MOVE || action == TEAM_ANSWERED_QUESTION || action == TEAM_PASSED_MOVE {
+	if action == TEAM_MAKE_MOVE || action == TEAM_ANSWERED_QUESTION {
 		//Create new meeting_log record
 		meetingLogRecord := MeetingLog{
 			MeetingID:    meeting.ID,
@@ -102,7 +104,7 @@ func ProcessTeamAction(action EventType, payload TeamActionPayload) error {
 			ActiveTeam:   team.ID,
 			FTeamScore:   payload.FTeamScore,
 			STeamScore:   payload.STeamScore,
-			Accepted:     action == TEAM_ANSWERED_QUESTION || action == TEAM_PASSED_MOVE,
+			Accepted:     action == TEAM_ANSWERED_QUESTION,
 		}
 
 		err = DB.Create(&meetingLogRecord)
