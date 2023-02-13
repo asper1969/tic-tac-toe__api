@@ -13,7 +13,7 @@ import (
 
 type CreateTournamentRequest struct {
 	Locale   string `json:"lang"`
-	MaxScore int    `json:"max_score"`
+	MaxScore int    `json:"maxScore"`
 	Rounds   int    `json:"rounds"`
 }
 
@@ -29,8 +29,9 @@ type JoinTournamentRequest struct {
 }
 
 type JoinTournamentResponse struct {
-	TokenTeam       string `json:"token_team"`
-	TokenTournament string `json:"token_tournament"`
+	TokenTeam        string `json:"token_team"`
+	TokenTournament  string `json:"token_tournament"`
+	SettingsMaxScore int    `json:"settings:max_score"`
 }
 
 type ActionTournamentRequest struct {
@@ -195,11 +196,13 @@ func TournamentsJoin(c buffalo.Context) error {
 		return c.Render(http.StatusBadGateway, r.JSON(err))
 	}
 
+	fmt.Println(tournament)
 	//return team token and tournament token
 
 	return c.Render(http.StatusOK, r.JSON(JoinTournamentResponse{
-		TokenTeam:       tokenTeam.ID.String(),
-		TokenTournament: tournamentToken.String(),
+		TokenTeam:        tokenTeam.ID.String(),
+		TokenTournament:  tournamentToken.String(),
+		SettingsMaxScore: tournament.MaxScore,
 	}))
 }
 
