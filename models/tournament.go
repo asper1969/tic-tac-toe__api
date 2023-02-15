@@ -12,15 +12,16 @@ import (
 
 // Tournament is used by pop to map your tournaments database table to your go code.
 type Tournament struct {
-	ID        int        `json:"id" db:"id"`
-	GamePass  string     `json:"game_pass" db:"game_pass"`
-	Locale    string     `json:"locale" db:"locale"`
-	StartDt   nulls.Time `json:"start_dt" db:"start_dt"`
-	EndDt     nulls.Time `json:"end_dt" db:"end_dt"`
-	MaxScore  int        `json:"max_score" db:"max_score"`
-	Rounds    int        `json:"rounds" db:"rounds"`
-	CreatedAt time.Time  `json:"created_at" db:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at" db:"updated_at"`
+	ID           int        `json:"id" db:"id"`
+	GamePass     string     `json:"game_pass" db:"game_pass"`
+	Locale       string     `json:"locale" db:"locale"`
+	StartDt      nulls.Time `json:"start_dt" db:"start_dt"`
+	EndDt        nulls.Time `json:"end_dt" db:"end_dt"`
+	MaxScore     int        `json:"max_score" db:"max_score"`
+	TeamsAmount  int        `json:"teams_amount" db:"teams_amount"`
+	FieldsAmount int        `json:"fields_amount" db:"fields_amount"`
+	CreatedAt    time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt    time.Time  `json:"updated_at" db:"updated_at"`
 }
 
 // String is not required by pop and may be deleted

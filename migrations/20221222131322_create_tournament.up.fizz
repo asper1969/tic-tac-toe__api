@@ -5,4 +5,6 @@ create_table("tournaments") {
     t.Column("start_dt", "datetime", {"null": true})
     t.Column("end_dt", "datetime", {"null": true})
     t.Column("max_score", "integer")
+    t.Column("teams_amount", "integer", {"default": 2})
+    t.Column("fields_amount", "integer", {"default": 1})
 }
