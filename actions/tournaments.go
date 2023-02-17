@@ -220,56 +220,6 @@ func TournamentsAction(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.JSON(requestData))
 }
 
-// TournamentsStart default implementation.
-func TournamentsStart(c buffalo.Context) error {
-	requestData := &ActionTournamentRequest{}
-
-	if err := c.Bind(requestData); err != nil {
-		fmt.Println(err)
-		return c.Render(http.StatusOK, r.JSON(err))
-	}
-
-	//Get tournament by token
-	tournament := models.Tournament{}
-	q := models.DB.Q()
-	q.LeftJoin("tokens", "tokens.object_id = tournaments.id")
-	q.Where(`tokens.id = ?`, requestData.Token)
-	err := q.Last(&tournament)
-
-	if err != nil {
-		return c.Render(http.StatusOK, r.JSON(err))
-	}
-
-	//TODO: if tournament already has meetings return error
-
-	//update tournament (update start dt)(?)
-	//create matches for all team pairs
-	err = tournament.CreateNextRound()
-
-	if err != nil {
-		return c.Render(http.StatusOK, r.JSON(err))
-	}
-
-	//Start first round
-	err = tournament.StartNextRound()
-
-	if err != nil {
-		return c.Render(http.StatusOK, r.JSON(err))
-	}
-
-	//Get all tournament matches with start_dt != NULL and end_dt == NULL
-	//In response return all matches
-	meetings := models.Meetings{}
-	err = models.DB.Where("start_dt IS NOT NULL AND end_dt IS NULL AND tournament_id = ?", tournament.ID).All(&meetings)
-
-	if err != nil {
-		fmt.Println(err)
-		return c.Render(http.StatusOK, r.JSON(err))
-	}
-
-	return c.Render(http.StatusOK, r.JSON(meetings))
-}
-
 // Create new tournament round default implementation.
 func TournamentsCreateRound(c buffalo.Context) error {
 	requestData := &ActionTournamentRequest{}
@@ -295,11 +245,7 @@ func TournamentsCreateRound(c buffalo.Context) error {
 	err = tournament.CreateNextRound()
 
 	if err != nil {
-		return c.Render(http.StatusOK, r.JSON(err))
-	}
-
-	if err != nil {
-		return c.Render(http.StatusOK, r.JSON(err))
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
 	}
 
 	//Get all tournament matches with start_dt != NULL and end_dt == NULL
