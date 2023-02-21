@@ -282,13 +282,13 @@ func TournamentsStartRound(c buffalo.Context) error {
 	}
 
 	//Start first round
-	err = tournament.StartNextRound()
+	meetings, err := tournament.StartNextRound()
 
 	if err != nil {
 		return c.Render(http.StatusOK, r.JSON(err))
 	}
 
-	return c.Render(http.StatusOK, r.JSON(tournament))
+	return c.Render(http.StatusOK, r.JSON(meetings))
 }
 
 // TournamentsStop default implementation.

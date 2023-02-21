@@ -16,6 +16,10 @@ type MoveRequestPayload struct {
 	STeamScore   int    `json:"s_team_score"`
 }
 
+type TeamWinRequestPayload struct {
+	TokenTeam string `json:"token_team"`
+}
+
 // MeetingsMakeMove default implementation.
 //TODO: test
 func MeetingsMakeMove(c buffalo.Context) error {
@@ -95,14 +99,14 @@ func MeetingsPassMove(c buffalo.Context) error {
 
 // MeetingsTeamWin default implementation.
 func MeetingsTeamWin(c buffalo.Context) error {
-	payload := &models.TeamActionPayload{}
+	payload := &TeamWinRequestPayload{}
 
 	if err := c.Bind(payload); err != nil {
 		fmt.Println(err)
 		return c.Render(http.StatusOK, r.JSON(err.Error()))
 	}
 
-	err := models.ProcessTeamAction(models.TEAM_WINS, *payload)
+	err := models.ProcessTeamWin(payload.TokenTeam)
 
 	if err != nil {
 		fmt.Println(err)

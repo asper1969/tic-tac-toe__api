@@ -255,17 +255,17 @@ func (t *Tournament) CreateNextRound() error {
 	return nil
 }
 
-func (t *Tournament) StartNextRound() error {
+func (t *Tournament) StartNextRound() (Meetings, error) {
 	//Get all new tournament meetings (start_dt == NULL)
 	meetings := Meetings{}
-	err := DB.Where("start_dt IS NULL AND tournament_id = ?", t.ID).All(&meetings)
+	err := DB.Where("start_dt IS NULL AND tournament_id = ?", t.ID).Order("field asc").All(&meetings)
 
 	if err != nil {
-		return err
+		return meetings, err
 	}
 
 	//Set start_dt for each meeting
-	for _, meeting := range meetings {
+	for i, meeting := range meetings {
 		meeting.StartDt = nulls.Time{
 			Time:  time.Now(),
 			Valid: true,
@@ -276,7 +276,7 @@ func (t *Tournament) StartNextRound() error {
 		err := DB.Where("id = ? || id = ?", meeting.FTeamID, meeting.STeamID).All(&teams)
 
 		if err != nil {
-			return err
+			return meetings, err
 		}
 
 		//Create ROUND_START events for each meeting teams
@@ -286,7 +286,7 @@ func (t *Tournament) StartNextRound() error {
 			err := DB.Where("object_id = ?", team.ID).Last(&token)
 
 			if err != nil {
-				return err
+				return meetings, err
 			}
 
 			event := Event{
@@ -300,13 +300,15 @@ func (t *Tournament) StartNextRound() error {
 			err = DB.Create(&event)
 
 			if err != nil {
-				fmt.Println(err)
-				return err
+				return meetings, err
 			}
 		}
+
+		meetings[i].FTeam = &teams[0]
+		meetings[i].STeam = &teams[1]
 	}
 
-	return nil
+	return meetings, nil
 }
 
 func GetMeetingField(teamIdx int, teamsAmount int, fieldsAmount int, currentRound int) int {

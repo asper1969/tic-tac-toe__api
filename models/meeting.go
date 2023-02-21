@@ -156,3 +156,66 @@ func ProcessTeamAction(action EventType, payload TeamActionPayload) error {
 
 	return nil
 }
+
+func ProcessTeamWin(teamToken string) error {
+	//Get team token
+	token := Token{}
+	err := DB.Where("id = ?", teamToken).Last(&token)
+
+	if err != nil {
+		return err
+	}
+
+	//Get team
+	team := Team{}
+	err = DB.Where("id = ?", token.ObjectID).Last(&team)
+
+	if err != nil {
+		return err
+	}
+
+	//Get meeting
+	meeting := Meeting{}
+	err = DB.Where("f_team_id = ? OR s_team_id = ?", team.ID, team.ID).Last(&meeting)
+
+	if err != nil {
+		return err
+	}
+
+	//set meeting end_dt
+	meeting.EndDt = nulls.Time{
+		Time:  time.Now(),
+		Valid: true,
+	}
+
+	err = DB.Update(&meeting)
+
+	if err != nil {
+		return err
+	}
+
+	//get tournament token
+	tournamentToken := Token{}
+	err = DB.Where("object_id = ?", meeting.TournamentID).Last(&tournamentToken)
+
+	if err != nil {
+		return err
+	}
+
+	//create event with tournament token reciever
+	event := Event{
+		SenderID:   token.ID,
+		ReceiverID: tournamentToken.ID,
+		Type:       TEAM_WINS,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	}
+
+	err = DB.Create(&event)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

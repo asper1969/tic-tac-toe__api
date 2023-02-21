@@ -36,6 +36,14 @@ type Event struct {
 	UpdatedAt  time.Time `json:"updated_at" db:"updated_at"`
 }
 
+type EventTypeWinResponsePayload struct {
+	MeetingID  int   `json:"meeting_id"`
+	FTeam      *Team `json:"f_team"`
+	STeam      *Team `json:"s_team"`
+	FTeamScore int   `json:"f_team_score"`
+	STeamScore int   `json:"s_team_score"`
+}
+
 // String is not required by pop and may be deleted
 func (e Event) String() string {
 	je, _ := json.Marshal(e)
@@ -139,7 +147,6 @@ func (e *Event) ProcessEventPayload() (string, error) {
 		meetingLog, err := GetLastMeetingLogByTokenID(tokenID)
 
 		if err != nil {
-			fmt.Println(err)
 			return "", err
 		}
 
@@ -151,8 +158,28 @@ func (e *Event) ProcessEventPayload() (string, error) {
 	case TEAM_PASSED_MOVE:
 		payload, _ = json.Marshal(map[string]bool{"opponent_passed_move": true})
 	case TEAM_WINS:
-		//Opponent gets signal
-		payload, _ = json.Marshal(map[string]bool{"": true})
+		//All tournament actors gets meeting result
+		tokenID := e.SenderID
+		meetingLog := MeetingLog{}
+		meeting, err := GetMeetingByTokenID(tokenID)
+
+		if err != nil {
+			return "", err
+		}
+
+		err = DB.Where("meeting_id = ?", meeting.ID).Last(&meetingLog)
+
+		payload, _ = json.Marshal(EventTypeWinResponsePayload{
+			MeetingID:  meeting.ID,
+			FTeam:      meeting.FTeam,
+			STeam:      meeting.STeam,
+			FTeamScore: meetingLog.FTeamScore,
+			STeamScore: meetingLog.STeamScore,
+		})
+
+		if err != nil {
+			return "", err
+		}
 	case TOURNAMENT_PAUSED:
 		//All teams gets signal. Game freezes
 	case TOURNAMENT_CONTINUED:
