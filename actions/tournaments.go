@@ -33,6 +33,7 @@ type JoinTournamentResponse struct {
 	TokenTeam        string `json:"token_team"`
 	TokenTournament  string `json:"token_tournament"`
 	SettingsMaxScore int    `json:"settings:max_score"`
+	SettingsLang     string `json:"settings:lang"`
 }
 
 type ActionTournamentRequest struct {
@@ -205,6 +206,7 @@ func TournamentsJoin(c buffalo.Context) error {
 		TokenTeam:        tokenTeam.ID.String(),
 		TokenTournament:  tournamentToken.String(),
 		SettingsMaxScore: tournament.MaxScore,
+		SettingsLang:     tournament.Locale,
 	}))
 }
 
@@ -251,11 +253,23 @@ func TournamentsCreateRound(c buffalo.Context) error {
 	//Get all tournament matches with start_dt != NULL and end_dt == NULL
 	//In response return all matches
 	meetings := models.Meetings{}
-	err = models.DB.Where("start_dt IS NOT NULL AND end_dt IS NULL AND tournament_id = ?", tournament.ID).All(&meetings)
+	err = models.DB.Where("start_dt IS NULL AND end_dt IS NULL AND tournament_id = ?", tournament.ID).All(&meetings)
 
 	if err != nil {
 		fmt.Println(err)
-		return c.Render(http.StatusOK, r.JSON(err))
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	for i, meeting := range meetings {
+		teams := models.Teams{}
+		err := models.DB.Where("id = ? || id = ?", meeting.FTeamID, meeting.STeamID).All(&teams)
+
+		if err != nil {
+			return c.Render(http.StatusOK, r.JSON(err.Error()))
+		}
+
+		meetings[i].FTeam = &teams[0]
+		meetings[i].STeam = &teams[1]
 	}
 
 	return c.Render(http.StatusOK, r.JSON(meetings))
