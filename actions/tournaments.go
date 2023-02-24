@@ -311,10 +311,31 @@ func TournamentsStop(c buffalo.Context) error {
 
 	if err := c.Bind(requestData); err != nil {
 		fmt.Println(err)
-		return c.Render(http.StatusOK, r.JSON(err))
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
 	}
 
-	return c.Render(http.StatusOK, r.JSON(requestData))
+	token := models.Token{}
+	err := models.DB.Where("id = ?", requestData.Token).Last(&token)
+
+	if err != nil {
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	//TODO: create event from tournament_token to
+	event := models.Event{
+		SenderID:   token.ID,
+		ReceiverID: token.ID,
+		Type:       models.TOURNAMENT_STOPPED,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	}
+	err = models.DB.Create(&event)
+
+	if err != nil {
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	return c.Render(http.StatusOK, r.JSON("tournament has been finished"))
 }
 
 // TournamentsPause default implementation.

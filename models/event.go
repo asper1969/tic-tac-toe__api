@@ -36,7 +36,7 @@ type Event struct {
 	UpdatedAt  time.Time `json:"updated_at" db:"updated_at"`
 }
 
-type EventTypeWinResponsePayload struct {
+type MeetingResultPayload struct {
 	MeetingID  int   `json:"meeting_id"`
 	FTeam      *Team `json:"f_team"`
 	STeam      *Team `json:"s_team"`
@@ -169,7 +169,7 @@ func (e *Event) ProcessEventPayload() (string, error) {
 
 		err = DB.Where("meeting_id = ?", meeting.ID).Last(&meetingLog)
 
-		payload, _ = json.Marshal(EventTypeWinResponsePayload{
+		payload, _ = json.Marshal(MeetingResultPayload{
 			MeetingID:  meeting.ID,
 			FTeam:      meeting.FTeam,
 			STeam:      meeting.STeam,
@@ -186,6 +186,7 @@ func (e *Event) ProcessEventPayload() (string, error) {
 		//All teams gets signal. Game resumed
 	case TOURNAMENT_STOPPED:
 		//All teams gets signal. All meetings ends
+		//TODO: in payload returns all current meetings results
 	case MODERATOR_UPDATES_MATCH:
 		//Both meeting teams gets updates
 	}
