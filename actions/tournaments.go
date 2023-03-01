@@ -1,7 +1,6 @@
 package actions
 
 import (
-	"fmt"
 	"net/http"
 	"tic-tac-toe__api/models"
 	"time"
@@ -46,7 +45,6 @@ func TournamentsCreate(c buffalo.Context) error {
 	requestData := &CreateTournamentRequest{}
 
 	if err := c.Bind(requestData); err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusOK, r.JSON(err))
 	}
 
@@ -69,7 +67,6 @@ func TournamentsCreate(c buffalo.Context) error {
 	err := models.DB.Create(&tournament)
 
 	if err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusBadGateway, r.JSON(err))
 	}
 
@@ -78,14 +75,12 @@ func TournamentsCreate(c buffalo.Context) error {
 	tournamenUUID, err := uuid.NewV7()
 
 	if err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusBadGateway, r.JSON(err))
 	}
 
 	moderatorUUID, err := uuid.NewV7()
 
 	if err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusBadGateway, r.JSON(err))
 	}
 
@@ -105,14 +100,12 @@ func TournamentsCreate(c buffalo.Context) error {
 	err = models.DB.Create(&tokenTournament)
 
 	if err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusBadGateway, r.JSON(err))
 	}
 
 	err = models.DB.Create(&tokenModerator)
 
 	if err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusBadGateway, r.JSON(err))
 	}
 
@@ -130,7 +123,6 @@ func TournamentsJoin(c buffalo.Context) error {
 	requestData := &JoinTournamentRequest{}
 
 	if err := c.Bind(requestData); err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusOK, r.JSON(err))
 	}
 
@@ -140,7 +132,6 @@ func TournamentsJoin(c buffalo.Context) error {
 	err := models.DB.Where("game_pass = ?", requestData.Code).First(&tournament)
 
 	if err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusOK, r.JSON(err))
 	}
 
@@ -155,7 +146,6 @@ func TournamentsJoin(c buffalo.Context) error {
 	err = models.DB.Create(&team)
 
 	if err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusBadGateway, r.JSON(err))
 	}
 
@@ -163,7 +153,6 @@ func TournamentsJoin(c buffalo.Context) error {
 	teamUUID, err := uuid.NewV7()
 
 	if err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusBadGateway, r.JSON(err))
 	}
 
@@ -177,7 +166,6 @@ func TournamentsJoin(c buffalo.Context) error {
 	err = models.DB.Create(&tokenTeam)
 
 	if err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusBadGateway, r.JSON(err))
 	}
 
@@ -196,10 +184,9 @@ func TournamentsJoin(c buffalo.Context) error {
 	err = models.DB.Create(&event)
 
 	if err != nil {
-		return c.Render(http.StatusBadGateway, r.JSON(err))
+		return c.Render(http.StatusBadGateway, r.JSON(err.Error()))
 	}
 
-	fmt.Println(tournament)
 	//return team token and tournament token
 
 	return c.Render(http.StatusOK, r.JSON(JoinTournamentResponse{
@@ -215,7 +202,6 @@ func TournamentsAction(c buffalo.Context) error {
 	requestData := &ActionTournamentRequest{}
 
 	if err := c.Bind(requestData); err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusOK, r.JSON(err))
 	}
 
@@ -227,8 +213,7 @@ func TournamentsCreateRound(c buffalo.Context) error {
 	requestData := &ActionTournamentRequest{}
 
 	if err := c.Bind(requestData); err != nil {
-		fmt.Println(err)
-		return c.Render(http.StatusOK, r.JSON(err))
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
 	}
 
 	//Get tournament by token
@@ -239,7 +224,7 @@ func TournamentsCreateRound(c buffalo.Context) error {
 	err := q.Last(&tournament)
 
 	if err != nil {
-		return c.Render(http.StatusOK, r.JSON(err))
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
 	}
 
 	//update tournament (update start dt)(?)
@@ -256,13 +241,12 @@ func TournamentsCreateRound(c buffalo.Context) error {
 	err = models.DB.Where("start_dt IS NULL AND end_dt IS NULL AND tournament_id = ?", tournament.ID).All(&meetings)
 
 	if err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusOK, r.JSON(err.Error()))
 	}
 
 	for i, meeting := range meetings {
 		teams := models.Teams{}
-		err := models.DB.Where("id = ? || id = ?", meeting.FTeamID, meeting.STeamID).All(&teams)
+		err := models.DB.Where("id = ? OR id = ?", meeting.FTeamID, meeting.STeamID).All(&teams)
 
 		if err != nil {
 			return c.Render(http.StatusOK, r.JSON(err.Error()))
@@ -280,7 +264,6 @@ func TournamentsStartRound(c buffalo.Context) error {
 	requestData := &ActionTournamentRequest{}
 
 	if err := c.Bind(requestData); err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusOK, r.JSON(err))
 	}
 
@@ -292,14 +275,14 @@ func TournamentsStartRound(c buffalo.Context) error {
 	err := q.Last(&tournament)
 
 	if err != nil {
-		return c.Render(http.StatusOK, r.JSON(err))
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
 	}
 
 	//Start first round
 	meetings, err := tournament.StartNextRound()
 
 	if err != nil {
-		return c.Render(http.StatusOK, r.JSON(err))
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
 	}
 
 	return c.Render(http.StatusOK, r.JSON(meetings))
@@ -310,7 +293,6 @@ func TournamentsStop(c buffalo.Context) error {
 	requestData := &ActionTournamentRequest{}
 
 	if err := c.Bind(requestData); err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusOK, r.JSON(err.Error()))
 	}
 
@@ -343,7 +325,6 @@ func TournamentsPause(c buffalo.Context) error {
 	requestData := &ActionTournamentRequest{}
 
 	if err := c.Bind(requestData); err != nil {
-		fmt.Println(err)
 		return c.Render(http.StatusOK, r.JSON(err))
 	}
 

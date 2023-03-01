@@ -171,7 +171,7 @@ func (t *Tournament) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error
 
 func (t *Tournament) GetToken() Token {
 	token := Token{}
-	err := DB.Where("object_id = ?", t.ID).First(&token)
+	err := DB.Where("object_id = ? AND type = ?", t.ID, TOKEN_TOURNAMENT).First(&token)
 
 	if err != nil {
 		fmt.Println("Token for object not found")
@@ -204,7 +204,6 @@ func (t *Tournament) CreateNextRound() error {
 	err = DB.Where("tournament_id = ?", t.ID).Order("id asc").All(&teams)
 
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
@@ -235,7 +234,6 @@ func (t *Tournament) CreateNextRound() error {
 			questionsSet, err := GetQuestionSet([]int{}, []int{}, t.Locale)
 
 			if err != nil {
-				fmt.Println(err)
 				return err
 			}
 
@@ -273,7 +271,7 @@ func (t *Tournament) StartNextRound() (Meetings, error) {
 		DB.Update(&meeting)
 
 		teams := Teams{}
-		err := DB.Where("id = ? || id = ?", meeting.FTeamID, meeting.STeamID).All(&teams)
+		err := DB.Where("id = ? OR id = ?", meeting.FTeamID, meeting.STeamID).All(&teams)
 
 		if err != nil {
 			return meetings, err
