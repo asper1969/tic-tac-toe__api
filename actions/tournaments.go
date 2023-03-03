@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"net/http"
 	"tic-tac-toe__api/models"
 	"time"
@@ -89,12 +90,14 @@ func TournamentsCreate(c buffalo.Context) error {
 		Type:      models.TOKEN_TOURNAMENT, //tournament
 		ObjectID:  tournament.ID,
 		CreatedAt: time.Now(),
+		Expired:   false,
 	}
 	tokenModerator := models.Token{
 		ID:        moderatorUUID,
 		Type:      models.TOKEN_MODERATOR, //moderator
 		ObjectID:  tournament.ID,
 		CreatedAt: time.Now(),
+		Expired:   false,
 	}
 
 	err = models.DB.Create(&tokenTournament)
@@ -161,6 +164,7 @@ func TournamentsJoin(c buffalo.Context) error {
 		Type:      models.TOKEN_TEAM, //team
 		ObjectID:  team.ID,
 		CreatedAt: time.Now(),
+		Expired:   false,
 	}
 
 	err = models.DB.Create(&tokenTeam)
@@ -288,6 +292,38 @@ func TournamentsStartRound(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.JSON(meetings))
 }
 
+// Start tournament round default implementation.
+func TournamentsStopRound(c buffalo.Context) error {
+	requestData := &ActionTournamentRequest{}
+
+	if err := c.Bind(requestData); err != nil {
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	token := models.Token{}
+	err := models.DB.Where("id = ?", requestData.Token).Last(&token)
+
+	if err != nil {
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	//TODO: create event from tournament_token to
+	event := models.Event{
+		SenderID:   token.ID,
+		ReceiverID: token.ID,
+		Type:       models.ROUND_STOPPED,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	}
+	err = models.DB.Create(&event)
+
+	if err != nil {
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	return c.Render(http.StatusOK, r.JSON("round has been finished"))
+}
+
 // TournamentsStop default implementation.
 func TournamentsStop(c buffalo.Context) error {
 	requestData := &ActionTournamentRequest{}
@@ -325,10 +361,83 @@ func TournamentsPause(c buffalo.Context) error {
 	requestData := &ActionTournamentRequest{}
 
 	if err := c.Bind(requestData); err != nil {
-		return c.Render(http.StatusOK, r.JSON(err))
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
 	}
 
-	return c.Render(http.StatusOK, r.JSON(requestData))
+	token := models.Token{}
+	err := models.DB.Where("id = ?", requestData.Token).Last(&token)
+
+	if err != nil {
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	//TODO: create event from tournament_token to
+	event := models.Event{
+		SenderID:   token.ID,
+		ReceiverID: token.ID,
+		Type:       models.TOURNAMENT_PAUSED,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	}
+	err = models.DB.Create(&event)
+
+	if err != nil {
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	return c.Render(http.StatusOK, r.JSON("tournament has been paused"))
+}
+
+// TournamentsPause default implementation.
+func TournamentsContinue(c buffalo.Context) error {
+	requestData := &ActionTournamentRequest{}
+
+	if err := c.Bind(requestData); err != nil {
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	token := models.Token{}
+	err := models.DB.Where("id = ?", requestData.Token).Last(&token)
+
+	if err != nil {
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	//TODO: create event from tournament_token to
+	event := models.Event{
+		SenderID:   token.ID,
+		ReceiverID: token.ID,
+		Type:       models.TOURNAMENT_CONTINUED,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	}
+	err = models.DB.Create(&event)
+
+	if err != nil {
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	return c.Render(http.StatusOK, r.JSON("tournament has been continued"))
+}
+
+func TournamentTokenIsActive(c buffalo.Context) error {
+	tournamentTokenId := c.Param("tournamentToken")
+
+	if tournamentTokenId == "" {
+		return c.Render(http.StatusBadRequest, r.JSON("tournamentToken is not specified"))
+	}
+
+	token := models.Token{}
+
+	err := models.DB.Where("id = ? AND expired = FALSE", tournamentTokenId).Last(&token)
+
+	fmt.Println(token)
+
+	if err != nil {
+		return c.Render(http.StatusNoContent, nil)
+	}
+
+	return c.Render(http.StatusOK, r.JSON(token))
 }
 
 func generateTournamentCode() string {

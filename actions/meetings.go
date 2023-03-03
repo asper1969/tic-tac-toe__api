@@ -78,6 +78,25 @@ func MeetingsAcceptMove(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.JSON(map[string]string{"message": "Move was accepted"}))
 }
 
+// MeetingsDeclineMove default implementation.
+func MeetingsDeclineMove(c buffalo.Context) error {
+	payload := &models.TeamActionPayload{}
+
+	if err := c.Bind(payload); err != nil {
+		fmt.Println(err)
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	err := models.ProcessTeamAction(models.TEAM_DECLINED_OPPONENT_MOVE, *payload)
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	return c.Render(http.StatusOK, r.JSON(map[string]string{"message": "Move was declined"}))
+}
+
 // MeetingsPassMove default implementation.
 func MeetingsPassMove(c buffalo.Context) error {
 	payload := &models.TeamActionPayload{}

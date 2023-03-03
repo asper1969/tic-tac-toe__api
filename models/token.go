@@ -24,6 +24,7 @@ type Token struct {
 	ObjectID  int       `json:"object_id" db:"object_id"`
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
+	Expired   bool      `json:"expired" db:"expired"`
 }
 
 // String is not required by pop and may be deleted
