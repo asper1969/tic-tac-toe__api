@@ -143,7 +143,7 @@ func (e *Event) ProcessEventPayload() (string, error) {
 	case TEAM_ACCEPT_OPPONENT_MOVE:
 		//Active team get signal answer quiz question
 		payload, _ = json.Marshal(map[string]bool{"move_accepted": true})
-	case TEAM_MAKE_MOVE, TEAM_ANSWERED_QUESTION:
+	case TEAM_MAKE_MOVE, TEAM_ANSWERED_QUESTION, TEAM_DECLINED_OPPONENT_MOVE:
 		//Opponent team gets last meeting_log record
 		tokenID := e.ReceiverID
 		meetingLog, err := GetLastMeetingLogByTokenID(tokenID)

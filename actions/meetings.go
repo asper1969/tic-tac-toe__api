@@ -87,6 +87,9 @@ func MeetingsDeclineMove(c buffalo.Context) error {
 		return c.Render(http.StatusOK, r.JSON(err.Error()))
 	}
 
+	//TODO: process team decline move
+	//Have to create events for both teams
+	//Set meeting log accept to false
 	err := models.ProcessTeamAction(models.TEAM_DECLINED_OPPONENT_MOVE, *payload)
 
 	if err != nil {

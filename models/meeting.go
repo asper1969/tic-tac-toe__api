@@ -94,27 +94,6 @@ func ProcessTeamAction(action EventType, payload TeamActionPayload) error {
 		return err
 	}
 
-	if action == TEAM_MAKE_MOVE || action == TEAM_ANSWERED_QUESTION {
-		//Create new meeting_log record
-		meetingLogRecord := MeetingLog{
-			MeetingID:    meeting.ID,
-			PlacesSet:    payload.PlacesSet,
-			QuestionsLog: payload.QuestionsLog,
-			CreatedAt:    time.Now(),
-			UpdatedAt:    time.Now(),
-			ActiveTeam:   team.ID,
-			FTeamScore:   payload.FTeamScore,
-			STeamScore:   payload.STeamScore,
-			Accepted:     action == TEAM_ANSWERED_QUESTION,
-		}
-
-		err = DB.Create(&meetingLogRecord)
-
-		if err != nil {
-			return err
-		}
-	}
-
 	//Get opponent team
 	opponent := Team{}
 	q := DB.Q()
@@ -139,7 +118,79 @@ func ProcessTeamAction(action EventType, payload TeamActionPayload) error {
 		return err
 	}
 
-	//Create new TEAM_MAKE_MOVE event
+	if action == TEAM_MAKE_MOVE || action == TEAM_ANSWERED_QUESTION {
+		//Create new meeting_log record
+		meetingLogRecord := MeetingLog{
+			MeetingID:    meeting.ID,
+			PlacesSet:    payload.PlacesSet,
+			QuestionsLog: payload.QuestionsLog,
+			CreatedAt:    time.Now(),
+			UpdatedAt:    time.Now(),
+			ActiveTeam:   team.ID,
+			FTeamScore:   payload.FTeamScore,
+			STeamScore:   payload.STeamScore,
+			Accepted:     action == TEAM_ANSWERED_QUESTION,
+		}
+
+		err = DB.Create(&meetingLogRecord)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	if action == TEAM_DECLINED_OPPONENT_MOVE {
+		//TODO: get meetingLog record before the last one
+		lastMeetingLogRecords := []MeetingLog{}
+		err = DB.Where("meeting_id = ?", meeting.ID).Order("created_at DESC").Limit(2).All(&lastMeetingLogRecords)
+
+		if err != nil {
+			return err
+		}
+
+		meetingLogRecord := MeetingLog{
+			MeetingID: meeting.ID,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+			Accepted:  true,
+		}
+
+		//Only one record
+		if len(lastMeetingLogRecords) < 2 {
+			meetingLogRecord.PlacesSet = "[0,0,0,0,0,0,0,0,0]"
+			meetingLogRecord.QuestionsLog = "[]"
+			meetingLogRecord.ActiveTeam = opponent.ID
+			meetingLogRecord.FTeamScore = 0
+			meetingLogRecord.STeamScore = 0
+		} else {
+			previousMeetingLogRecord := lastMeetingLogRecords[1]
+			meetingLogRecord.PlacesSet = previousMeetingLogRecord.PlacesSet
+			meetingLogRecord.QuestionsLog = previousMeetingLogRecord.QuestionsLog
+			meetingLogRecord.ActiveTeam = previousMeetingLogRecord.ActiveTeam
+			meetingLogRecord.FTeamScore = previousMeetingLogRecord.FTeamScore
+			meetingLogRecord.STeamScore = previousMeetingLogRecord.STeamScore
+		}
+
+		//Create new meetingLog
+		DB.Create(&meetingLogRecord)
+
+		//Create an event for sender
+		event := Event{
+			SenderID:   token.ID,
+			ReceiverID: token.ID,
+			Type:       action,
+			CreatedAt:  time.Now(),
+			UpdatedAt:  time.Now(),
+		}
+
+		err = DB.Create(&event)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	//Create new event for opponent
 	event := Event{
 		SenderID:   token.ID,
 		ReceiverID: opponentToken.ID,
