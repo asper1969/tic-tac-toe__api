@@ -46,6 +46,16 @@ type MeetingResultPayload struct {
 	STeamScore int   `json:"s_team_score"`
 }
 
+type MeetingResultPayloadRaw struct {
+	MeetingID  int    `json:"meeting_id" db:"meeting_id"`
+	FTeamID    int    `json:"f_team_id" db:"f_team_id"`
+	FTeamName  string `json:"f_team_name" db:"f_team_name"`
+	FTeamScore string `json:"f_team_score" db:"f_team_score"`
+	STeamID    int    `json:"s_team_id" db:"s_team_id"`
+	STeamName  string `json:"s_team_name" db:"s_team_name"`
+	STeamScore string `json:"s_team_score" db:"s_team_score"`
+}
+
 // String is not required by pop and may be deleted
 func (e Event) String() string {
 	je, _ := json.Marshal(e)
@@ -189,6 +199,64 @@ func (e *Event) ProcessEventPayload() (string, error) {
 	case TOURNAMENT_STOPPED:
 		//All teams gets signal. All meetings ends
 		//TODO: in payload returns all current meetings results
+		//Get sender token - it's tournament token
+		//By token object_id get tournament all meetings (bind by tournament_id)
+		//For each meeting get last accepted meeting log
+	case ROUND_STOPPED:
+		//TODO: merge with TOURNAMENT_STOP
+		tokenID := e.SenderID
+
+		//Get all meetings by tournament token
+		token := Token{}
+		err := DB.Where("id = ?", tokenID).Last(&token)
+
+		if err != nil {
+			return "", err
+		}
+
+		tournament := Tournament{}
+		err = DB.Where("id = ?", token.ObjectID).Last(&tournament)
+
+		if err != nil {
+			return "", err
+		}
+
+		//Get all tournament meetings
+		meetings := Meetings{}
+
+		err = DB.Where("tournament_id = ?", tournament.ID).All(&meetings)
+
+		if err != nil {
+			return "", err
+		}
+
+		mostActualMeeting := Meeting{}
+		err = DB.Where("tournament_id = ?", tournament.ID).Last(&mostActualMeeting)
+
+		if err != nil {
+			return "", err
+		}
+
+		lastRoundMeetings := Meetings{}
+
+		for _, meeting := range meetings {
+			//bind last accepted meeting log
+			if meeting.Round != mostActualMeeting.Round {
+				continue
+			}
+
+			meetingLog := MeetingLog{}
+			teams := Teams{}
+			DB.Where("id = ? OR id = ?", meeting.FTeamID, meeting.STeamID).All(&teams)
+			DB.Where("meeting_id = ? AND accepted = TRUE", meeting.ID).Last(&meetingLog)
+
+			meeting.MeetingLogs = MeetingLogs{meetingLog}
+			meeting.FTeam = &teams[0]
+			meeting.STeam = &teams[1]
+			lastRoundMeetings = append(lastRoundMeetings, meeting)
+		}
+
+		payload, _ = json.Marshal(lastRoundMeetings)
 	case MODERATOR_UPDATES_MATCH:
 		//Both meeting teams gets updates
 	}

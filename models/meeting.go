@@ -270,3 +270,27 @@ func ProcessTeamWin(teamToken string) error {
 
 	return nil
 }
+
+func EndMeeting(meetingID int) error {
+	//Get meeting
+	meeting := Meeting{}
+	err := DB.Where("id = ?", meetingID).Last(&meeting)
+
+	if err != nil {
+		return err
+	}
+
+	//set meeting end_dt
+	meeting.EndDt = nulls.Time{
+		Time:  time.Now(),
+		Valid: true,
+	}
+
+	err = DB.Update(&meeting)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
