@@ -327,7 +327,6 @@ func TournamentsStopRound(c buffalo.Context) error {
 		models.EndMeeting(meeting.ID)
 	}
 
-	//TODO: create event from tournament_token to
 	event := models.Event{
 		SenderID:   token.ID,
 		ReceiverID: token.ID,
@@ -359,7 +358,26 @@ func TournamentsStop(c buffalo.Context) error {
 		return c.Render(http.StatusOK, r.JSON(err.Error()))
 	}
 
-	//TODO: create event from tournament_token to
+	//Get tournament by tournamentToken
+	tournament := models.Tournament{}
+	err = models.DB.Where("id = ?", token.ObjectID).Last(&tournament)
+
+	if err != nil {
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	//Get all tournament meetings
+	meetings := models.Meetings{}
+	err = models.DB.Where("tournament_id = ? AND end_dt IS NULL", tournament.ID).All(&meetings)
+
+	if err != nil {
+		return c.Render(http.StatusOK, r.JSON(err.Error()))
+	}
+
+	for _, meeting := range meetings {
+		models.EndMeeting(meeting.ID)
+	}
+
 	event := models.Event{
 		SenderID:   token.ID,
 		ReceiverID: token.ID,

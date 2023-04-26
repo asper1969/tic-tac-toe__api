@@ -196,13 +196,13 @@ func (e *Event) ProcessEventPayload() (string, error) {
 		//All teams gets signal. Game freezes
 	case TOURNAMENT_CONTINUED:
 		//All teams gets signal. Game resumed
-	case TOURNAMENT_STOPPED:
-		//All teams gets signal. All meetings ends
-		//TODO: in payload returns all current meetings results
-		//Get sender token - it's tournament token
-		//By token object_id get tournament all meetings (bind by tournament_id)
-		//For each meeting get last accepted meeting log
-	case ROUND_STOPPED:
+	// case TOURNAMENT_STOPPED:
+	//All teams gets signal. All meetings ends
+	//TODO: in payload returns all current meetings results
+	//Get sender token - it's tournament token
+	//By token object_id get tournament all meetings (bind by tournament_id)
+	//For each meeting get last accepted meeting log
+	case TOURNAMENT_STOPPED, ROUND_STOPPED:
 		//TODO: merge with TOURNAMENT_STOP
 		tokenID := e.SenderID
 
