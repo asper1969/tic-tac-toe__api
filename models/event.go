@@ -26,6 +26,7 @@ const (
 	MODERATOR_UPDATES_MATCH     EventType = 11
 	ROUND_STOPPED               EventType = 12
 	TEAM_DECLINED_OPPONENT_MOVE EventType = 13
+	TOURNAMENT_ENDED            EventType = 14
 )
 
 // Event is used by pop to map your events database table to your go code.
@@ -202,6 +203,8 @@ func (e *Event) ProcessEventPayload() (string, error) {
 	//Get sender token - it's tournament token
 	//By token object_id get tournament all meetings (bind by tournament_id)
 	//For each meeting get last accepted meeting log
+	case TOURNAMENT_ENDED:
+		//All teams gets signal
 	case TOURNAMENT_STOPPED, ROUND_STOPPED:
 		//TODO: merge with TOURNAMENT_STOP
 		tokenID := e.SenderID

@@ -83,6 +83,7 @@ func App() *buffalo.App {
 		app.POST("/api/tournaments/start_round", TournamentsStartRound)
 		app.POST("/api/tournaments/stop_round", TournamentsStopRound)
 		app.POST("/api/tournaments/stop", TournamentsStop)
+		app.POST("/api/tournaments/end", TournamentsEnd)
 		app.POST("/api/tournaments/pause", TournamentsPause)
 		app.POST("/api/tournaments/continue", TournamentsContinue)
 		app.POST("/api/tournaments/action", TournamentsAction)
