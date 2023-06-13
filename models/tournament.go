@@ -108,7 +108,7 @@ var TournamentTable = map[int]interface{}{
 		},
 		3: map[int]interface{}{
 			1: [][]int{{1, 2}, {3, 4}, {5, 6}}, //Round 1: Court 1: t1-t2, Court 2: t3-t4, Court 3: t5-t6
-			2: [][]int{{3, 5}, {2, 6}, {1, 4}},
+			2: [][]int{{3, 5}, {2, 6}, {1, 4}}, //TODO: check grid
 			3: [][]int{{3, 6}, {5, 1}, {2, 4}},
 			4: [][]int{{1, 6}, {2, 4}, {3, 5}},
 			5: [][]int{{4, 5}, {3, 6}, {1, 2}},
