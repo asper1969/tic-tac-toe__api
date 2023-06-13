@@ -521,3 +521,7 @@ func generateTournamentCode() string {
 
 	return str
 }
+
+func TournamentGetSession(c buffalo.Context) error {
+	return c.Render(http.StatusOK, r.JSON(""))
+}

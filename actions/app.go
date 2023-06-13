@@ -95,6 +95,7 @@ func App() *buffalo.App {
 		app.POST("/api/meetings/pass_move", MeetingsPassMove)
 		app.POST("/api/meetings/team_win", MeetingsTeamWin)
 		app.POST("/api/tournaments/check_token", TournamentTokenIsActive)
+		app.GET("/api/tournaments/get_session", TournamentGetSession)
 
 		app.GET("/api/tests/get", TestsGet)
 		app.POST("/api/tests/post", TestsPost)
