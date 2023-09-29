@@ -154,7 +154,7 @@ func (e *Event) ProcessEventPayload() (string, error) {
 	case TEAM_ACCEPT_OPPONENT_MOVE:
 		//Active team get signal answer quiz question
 		payload, _ = json.Marshal(map[string]bool{"move_accepted": true})
-	case TEAM_MAKE_MOVE, TEAM_ANSWERED_QUESTION, TEAM_DECLINED_OPPONENT_MOVE:
+	case TEAM_MAKE_MOVE, TEAM_ANSWERED_QUESTION, TEAM_DECLINED_OPPONENT_MOVE, TEAM_PASSED_MOVE:
 		//Opponent team gets last meeting_log record
 		tokenID := e.ReceiverID
 		meetingLog, err := GetLastMeetingLogByTokenID(tokenID)
@@ -168,8 +168,8 @@ func (e *Event) ProcessEventPayload() (string, error) {
 		if err != nil {
 			return "", err
 		}
-	case TEAM_PASSED_MOVE:
-		payload, _ = json.Marshal(map[string]bool{"opponent_passed_move": true})
+	// case TEAM_PASSED_MOVE:
+	// 	payload, _ = json.Marshal(map[string]bool{"opponent_passed_move": true})
 	case TEAM_WINS:
 		//All tournament actors gets meeting result
 		tokenID := e.SenderID

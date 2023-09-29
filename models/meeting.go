@@ -118,7 +118,7 @@ func ProcessTeamAction(action EventType, payload TeamActionPayload) error {
 		return err
 	}
 
-	if action == TEAM_MAKE_MOVE || action == TEAM_ANSWERED_QUESTION {
+	if action == TEAM_MAKE_MOVE || action == TEAM_ANSWERED_QUESTION || action == TEAM_PASSED_MOVE {
 		//Create new meeting_log record
 		meetingLogRecord := MeetingLog{
 			MeetingID:    meeting.ID,
