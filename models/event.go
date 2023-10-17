@@ -104,7 +104,7 @@ func GetLastEvents(tokens []string, lastEventID string) (Events, error) {
 			return nil, err
 		}
 
-		dbQuery.Where("created_at > ?", lastEvent.CreatedAt)
+		dbQuery.Where("created_at >= ? AND id != ?", lastEvent.CreatedAt, lastEventID)
 	}
 
 	dbQuery.Order("created_at ASC")
