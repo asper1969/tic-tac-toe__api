@@ -24,6 +24,23 @@ type CreateTournamentResponse struct {
 	TokenTournament string `json:"token_tournament"`
 }
 
+type JoinOpponentsRequest struct {
+	FTeamName string `json:"f_team_name"`
+	STeamName string `json:"s_team_name"`
+	Code      string `json:"code"`
+}
+
+type JoinOpponentsResponse struct {
+	FTeamName        string `json:"f_team_name"`
+	FTeamToken       string `json:"f_team_token"`
+	STeamName        string `json:"s_team_name"`
+	STeamToken       string `json:"s_team_token"`
+	TokenTournament  string `json:"token_tournament"`
+	SettingsMaxScore int    `json:"settings:max_score"`
+	SettingsLang     string `json:"settings:lang"`
+	Field            int    `json:"field"`
+}
+
 type JoinTournamentRequest struct {
 	TeamName string `json:"team_name"`
 	Code     string `json:"code"`
@@ -186,6 +203,45 @@ func TournamentsJoin(c buffalo.Context) error {
 	}
 
 	err = models.DB.Create(&event)
+
+	if err != nil {
+		return c.Render(http.StatusBadGateway, r.JSON(err.Error()))
+	}
+
+	//return team token and tournament token
+
+	return c.Render(http.StatusOK, r.JSON(JoinTournamentResponse{
+		TokenTeam:        tokenTeam.ID.String(),
+		TokenTournament:  tournamentToken.String(),
+		SettingsMaxScore: tournament.MaxScore,
+		SettingsLang:     tournament.Locale,
+	}))
+}
+
+// TournamentsJoin default implementation.
+func TournamentsJoinOpponents(c buffalo.Context) error {
+	requestData := &JoinOpponentsRequest{}
+
+	if err := c.Bind(requestData); err != nil {
+		return c.Render(http.StatusOK, r.JSON(err))
+	}
+
+	//Get tournament by code
+	tournament := models.Tournament{}
+
+	err := models.DB.Where("game_pass = ?", requestData.Code).Last(&tournament)
+
+	if err != nil {
+		return c.Render(http.StatusOK, r.JSON(err))
+	}
+
+	fTeam, err := tournament.AddNewTeam(requestData.FTeamName)
+
+	if err != nil {
+		return c.Render(http.StatusBadGateway, r.JSON(err.Error()))
+	}
+
+	sTeam, err := tournament.AddNewTeam(requestData.FTeamName)
 
 	if err != nil {
 		return c.Render(http.StatusBadGateway, r.JSON(err.Error()))

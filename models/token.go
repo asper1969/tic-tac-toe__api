@@ -15,6 +15,7 @@ const (
 	TOKEN_TOURNAMENT TokenType = 1
 	TOKEN_MODERATOR  TokenType = 2
 	TOKEN_TEAM       TokenType = 3
+	TOKEN_FIELD      TokenType = 4
 )
 
 // Token is used by pop to map your tokens database table to your go code.

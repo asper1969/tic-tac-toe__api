@@ -8,6 +8,7 @@ import (
 	"github.com/gobuffalo/nulls"
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
+	"github.com/gofrs/uuid"
 )
 
 var TournamentTable = map[int]interface{}{
@@ -324,4 +325,61 @@ func GetMeetingField(teamIdx int, teamsAmount int, fieldsAmount int, currentRoun
 	}
 
 	return 0
+}
+
+func (t *Tournament) AddNewTeam(teamName string) (Team, error) {
+	//Create team record
+	team := Team{
+		Name:         teamName,
+		TournamentID: t.ID,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
+	}
+
+	err := DB.Create(&team)
+
+	if err != nil {
+		return team, err
+	}
+
+	//Create team token
+	teamUUID, err := uuid.NewV7()
+
+	if err != nil {
+		return team, err
+	}
+
+	tokenTeam := Token{
+		ID:        teamUUID,
+		Type:      TOKEN_TEAM, //team
+		ObjectID:  team.ID,
+		CreatedAt: time.Now(),
+		Expired:   false,
+	}
+
+	err = DB.Create(&tokenTeam)
+
+	if err != nil {
+		return team, err
+	}
+
+	tournamentToken := t.GetToken().ID
+
+	//Get moderator token
+	//Create new event
+	event := Event{
+		SenderID:   tokenTeam.ID,
+		ReceiverID: tournamentToken,
+		Type:       TEAM_JOIN_TOURNAMENT,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	}
+
+	err = DB.Create(&event)
+
+	if err != nil {
+		return team, err
+	}
+
+	return team, nil
 }
