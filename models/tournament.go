@@ -327,7 +327,7 @@ func GetMeetingField(teamIdx int, teamsAmount int, fieldsAmount int, currentRoun
 	return 0
 }
 
-func (t *Tournament) AddNewTeam(teamName string) (Team, error) {
+func (t *Tournament) AddNewTeam(teamName string) (Team, Token, error) {
 	//Create team record
 	team := Team{
 		Name:         teamName,
@@ -339,14 +339,14 @@ func (t *Tournament) AddNewTeam(teamName string) (Team, error) {
 	err := DB.Create(&team)
 
 	if err != nil {
-		return team, err
+		return team, Token{}, err
 	}
 
 	//Create team token
 	teamUUID, err := uuid.NewV7()
 
 	if err != nil {
-		return team, err
+		return team, Token{}, err
 	}
 
 	tokenTeam := Token{
@@ -360,7 +360,7 @@ func (t *Tournament) AddNewTeam(teamName string) (Team, error) {
 	err = DB.Create(&tokenTeam)
 
 	if err != nil {
-		return team, err
+		return team, tokenTeam, err
 	}
 
 	tournamentToken := t.GetToken().ID
@@ -378,8 +378,33 @@ func (t *Tournament) AddNewTeam(teamName string) (Team, error) {
 	err = DB.Create(&event)
 
 	if err != nil {
-		return team, err
+		return team, tokenTeam, err
 	}
 
-	return team, nil
+	return team, tokenTeam, nil
+}
+
+func (t *Tournament) AddFieldModerator() (Token, error) {
+	//Create team token
+	moderatorUUID, err := uuid.NewV7()
+
+	if err != nil {
+		return Token{}, err
+	}
+
+	//get current moderators count
+	var moderatorsCount int
+	DB.Where("type = ? AND object_id = ?", TOKEN_MODERATOR, t.ID).Count(&moderatorsCount)
+
+	moderatorToken := Token{
+		ID:        moderatorUUID,
+		Type:      TOKEN_MODERATOR, //field moderator
+		ObjectID:  moderatorsCount + 1,
+		CreatedAt: time.Now(),
+		Expired:   false,
+	}
+
+	err = DB.Create(&moderatorToken)
+
+	return moderatorToken, err
 }
