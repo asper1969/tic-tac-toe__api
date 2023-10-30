@@ -46,7 +46,9 @@ type JoinOpponentsResponse struct {
 	TokenTournament  string `json:"token_tournament"`
 	SettingsMaxScore int    `json:"settings:max_score"`
 	SettingsLang     string `json:"settings:lang"`
+	SettingsField    int    `json:"settings:field"`
 	Field            int    `json:"field"`
+	ModeratorToken   string `json:"moderator_token"`
 }
 
 type JoinTournamentRequest struct {
@@ -243,25 +245,32 @@ func TournamentsJoinOpponents(c buffalo.Context) error {
 		return c.Render(http.StatusOK, r.JSON(err))
 	}
 
-	fTeam, err := tournament.AddNewTeam(requestData.FTeamName)
+	fTeam, fTeamToken, err := tournament.AddNewTeam(requestData.FTeamName)
 
 	if err != nil {
 		return c.Render(http.StatusBadGateway, r.JSON(err.Error()))
 	}
 
-	sTeam, err := tournament.AddNewTeam(requestData.FTeamName)
+	sTeam, sTeamToken, err := tournament.AddNewTeam(requestData.FTeamName)
 
 	if err != nil {
 		return c.Render(http.StatusBadGateway, r.JSON(err.Error()))
 	}
+
+	moderatorToken := tournament.GetToken()
 
 	//return team token and tournament token
-
-	return c.Render(http.StatusOK, r.JSON(JoinTournamentResponse{
-		TokenTeam:        tokenTeam.ID.String(),
-		TokenTournament:  tournamentToken.String(),
+	return c.Render(http.StatusOK, r.JSON(JoinOpponentsResponse{
+		FTeamName:        fTeam.Name,
+		FTeamToken:       fTeamToken.ID.String(),
+		STeamName:        sTeam.Name,
+		STeamToken:       sTeamToken.ID.String(),
+		TokenTournament:  tournament.GetToken().String(),
 		SettingsMaxScore: tournament.MaxScore,
 		SettingsLang:     tournament.Locale,
+		SettingsField:    tournament.FieldsAmount,
+		Field:            moderatorToken.ObjectID,
+		ModeratorToken:   moderatorToken.ID.String(),
 	}))
 }
 
