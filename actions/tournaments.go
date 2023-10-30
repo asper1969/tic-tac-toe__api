@@ -18,6 +18,14 @@ type CreateTournamentRequest struct {
 	FieldsAmount int    `json:"numberOfFields"`
 }
 
+type CreateTournamentWithTeamsRequest struct {
+	Locale       string   `json:"lang"`
+	MaxScore     int      `json:"maxScore"`
+	TeamsAmount  int      `json:"numberOfTeams"`
+	FieldsAmount int      `json:"numberOfFields"`
+	TeamsNames   []string `json:"teamsNames"`
+}
+
 type CreateTournamentResponse struct {
 	Code            string `json:"code"`
 	TokenModerator  string `json:"token_moderator"`
